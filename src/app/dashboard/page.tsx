@@ -313,14 +313,14 @@ export default function DashboardPage() {
                     <p className="text-xs font-semibold text-foreground">Matte Crimson Accent</p>
                     <p className="text-[11px] text-muted-foreground">Order 20L to reach safety stock</p>
                   </div>
-                  <Button size="sm" className="h-8 text-xs bg-primary text-white rounded-lg">Order</Button>
+                  <Button size="sm" className="h-8 text-xs bg-primary text-primary-foreground rounded-lg">Order</Button>
                 </div>
                 <div className="p-3 bg-secondary/30 rounded-xl flex items-center justify-between">
                   <div>
                     <p className="text-xs font-semibold text-foreground">EcoPure Primer White</p>
                     <p className="text-[11px] text-muted-foreground">Order 50L to reach safety stock</p>
                   </div>
-                  <Button size="sm" className="h-8 text-xs bg-primary text-white rounded-lg">Order</Button>
+                  <Button size="sm" className="h-8 text-xs bg-primary text-primary-foreground rounded-lg">Order</Button>
                 </div>
               </CardContent>
             </Card>

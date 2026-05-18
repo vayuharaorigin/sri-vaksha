@@ -118,7 +118,7 @@ export default function ProductsPage() {
               onClick={() => setFilterCategory(cat)}
               className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${
                 filterCategory === cat 
-                  ? "bg-primary text-white border-primary shadow-sm" 
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm" 
                   : "bg-white hover:bg-secondary border-border text-muted-foreground"
               }`}
             >
@@ -291,7 +291,7 @@ export default function ProductsPage() {
                     <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} className="rounded-xl h-11">
                       Cancel
                     </Button>
-                    <Button type="submit" className="bg-primary text-white rounded-xl h-11">
+                    <Button type="submit" className="bg-primary text-primary-foreground rounded-xl h-11">
                       Save Product
                     </Button>
                   </div>

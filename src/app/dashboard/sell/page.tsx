@@ -296,7 +296,7 @@ export default function SellPage() {
             </div>
 
             <Button 
-              className="w-full bg-primary text-white hover:bg-primary/90 h-12 rounded-2xl font-bold shadow-md"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-2xl font-bold shadow-md"
               disabled={cart.length === 0}
               onClick={handleCheckout}
             >

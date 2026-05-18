@@ -43,7 +43,7 @@ export default function SettingsPage() {
               <label className="text-xs font-semibold text-muted-foreground">Physical Address</label>
               <Input defaultValue="100 Luxury Avenue, Suite A, New York, NY" />
             </div>
-            <Button className="gap-2 bg-primary text-white hover:bg-primary/90 rounded-2xl h-11 px-6">
+            <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-2xl h-11 px-6">
               <Save size={16} />
               Save Profile
             </Button>
