@@ -18,19 +18,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-
-// Mock Products Data
-const initialProducts = [
-  { id: 1, name: "Royal Satin Blue", category: "Interior Paint", sku: "PF-RSB-01", qty: 24, price: 45.00, status: "In Stock", rgb: "#1E3A8A" },
-  { id: 2, name: "Matte Crimson Accent", category: "Interior Paint", sku: "PF-MCA-02", qty: 3, price: 52.00, status: "Low Stock", rgb: "#EF4444" },
-  { id: 3, name: "Classic Navy Matte", category: "Wall Paint", sku: "PF-CNM-03", qty: 142, price: 38.00, status: "In Stock", rgb: "#1e293b" },
-  { id: 4, name: "EcoPure Primer White", category: "Primers", sku: "PF-EPW-04", qty: 5, price: 29.99, status: "Low Stock", rgb: "#f8fafc" },
-  { id: 5, name: "Warm Beige Silk", category: "Interior Paint", sku: "PF-WBS-05", qty: 84, price: 40.00, status: "In Stock", rgb: "#d97706" },
-  { id: 6, name: "Forest Canopy Satin", category: "Exterior Paint", sku: "PF-FCS-06", qty: 18, price: 48.00, status: "In Stock", rgb: "#065f46" },
-];
+import { useInventory } from "@/context/InventoryContext";
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState(initialProducts);
+  const { products, addProduct, deleteProduct } = useInventory();
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   
@@ -56,18 +47,15 @@ export default function ProductsPage() {
     e.preventDefault();
     if (!newProductName || !newProductSKU) return;
 
-    const newProduct = {
-      id: products.length + 1,
+    addProduct({
       name: newProductName,
       category: newProductCategory,
       sku: newProductSKU,
       qty: Number(newProductQty),
       price: Number(newProductPrice),
-      status: Number(newProductQty) <= 5 ? "Low Stock" : "In Stock",
       rgb: newProductColor
-    };
+    });
 
-    setProducts([newProduct, ...products]);
     setIsAddOpen(false);
 
     // Reset Form
@@ -79,7 +67,7 @@ export default function ProductsPage() {
   };
 
   const handleDeleteProduct = (id: number) => {
-    setProducts(products.filter(p => p.id !== id));
+    deleteProduct(id);
   };
 
   return (

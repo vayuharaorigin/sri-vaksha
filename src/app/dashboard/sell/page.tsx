@@ -16,21 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-// Mock Products
-const posProducts = [
-  { id: 1, name: "Royal Satin Blue", sku: "PF-RSB-01", price: 45.00, qty: 24, rgb: "#1E3A8A" },
-  { id: 2, name: "Matte Crimson Accent", sku: "PF-MCA-02", price: 52.00, qty: 3, rgb: "#EF4444" },
-  { id: 3, name: "Classic Navy Matte", sku: "PF-CNM-03", price: 38.00, qty: 142, rgb: "#1e293b" },
-  { id: 4, name: "EcoPure Primer White", sku: "PF-EPW-04", price: 29.99, qty: 5, rgb: "#f8fafc" },
-  { id: 5, name: "Warm Beige Silk", sku: "PF-WBS-05", price: 40.00, qty: 84, rgb: "#d97706" },
-  { id: 6, name: "Forest Canopy Satin", sku: "PF-FCS-06", price: 48.00, qty: 18, rgb: "#065f46" },
-];
+import { useInventory, Product } from "@/context/InventoryContext";
 
 export default function SellPage() {
-  const [products, setProducts] = useState(posProducts);
+  const { products, processCheckout } = useInventory();
   const [search, setSearch] = useState("");
-  const [cart, setCart] = useState<{ product: typeof posProducts[0]; quantity: number }[]>([]);
+  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
   const [completedInvoice, setCompletedInvoice] = useState<{
@@ -47,7 +38,7 @@ export default function SellPage() {
     p.sku.toLowerCase().includes(search.toLowerCase())
   );
 
-  const addToCart = (product: typeof posProducts[0], qtyToAdd = 1) => {
+  const addToCart = (product: Product, qtyToAdd = 1) => {
     if (product.qty <= 0) return;
     const existing = cart.find(item => item.product.id === product.id);
     if (existing) {
@@ -63,11 +54,14 @@ export default function SellPage() {
   };
 
   const updateCartQty = (id: number, delta: number) => {
+    const activeProduct = products.find(p => p.id === id);
+    if (!activeProduct) return;
+    
     setCart(cart.map(item => {
       if (item.product.id === id) {
         const nextQty = item.quantity + delta;
         if (nextQty <= 0) return null;
-        if (nextQty > item.product.qty) return item;
+        if (nextQty > activeProduct.qty) return item;
         return { ...item, quantity: nextQty };
       }
       return item;
@@ -108,14 +102,8 @@ export default function SellPage() {
       }),
     });
 
-    // Deduct stock
-    setProducts(products.map(p => {
-      const cartItem = cart.find(item => item.product.id === p.id);
-      if (cartItem) {
-        return { ...p, qty: p.qty - cartItem.quantity };
-      }
-      return p;
-    }));
+    // Deduct stock levels in global context
+    processCheckout(cart);
 
     setInvoiceId(currentInvoiceId);
     setShowSuccess(true);

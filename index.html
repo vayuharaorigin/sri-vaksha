@@ -1026,26 +1026,49 @@
 
   <!-- ==================== JAVASCRIPT STATE CONTROL ==================== -->
   <script>
+    // Constants for Initial Mock Data
+    const initialProducts = [
+      { id: 1, name: "Royal Satin Blue", category: "Interior Paint", sku: "PF-RSB-01", qty: 24, price: 45.00, status: "In Stock", rgb: "#1E3A8A" },
+      { id: 2, name: "Matte Crimson Accent", category: "Interior Paint", sku: "PF-MCA-02", qty: 3, price: 52.00, status: "Low Stock", rgb: "#EF4444" },
+      { id: 3, name: "Classic Navy Matte", category: "Wall Paint", sku: "PF-CNM-03", sku_raw: "PF-CNM-03", qty: 142, price: 38.00, status: "In Stock", rgb: "#1e293b" },
+      { id: 4, name: "EcoPure Primer White", category: "Primers", sku: "PF-EPW-04", qty: 5, price: 29.99, status: "Low Stock", rgb: "#dfdfdf" },
+      { id: 5, name: "Warm Beige Silk", category: "Interior Paint", sku: "PF-WBS-05", qty: 84, price: 40.00, status: "In Stock", rgb: "#d97706" },
+      { id: 6, name: "Forest Canopy Satin", category: "Exterior Paint", sku: "PF-FCS-06", qty: 18, price: 48.00, status: "In Stock", rgb: "#065f46" }
+    ];
+
+    const initialLogs = [
+      { time: new Date().toLocaleTimeString(), item: "Royal Satin Blue", change: "+10 L", balance: 24, operator: "John Doe" },
+      { time: new Date(Date.now() - 3600000).toLocaleTimeString(), item: "Matte Crimson Accent", change: "-5 L", balance: 3, operator: "Jane Smith" },
+    ];
+
+    // Helper to retrieve localStorage items safely
+    function getStoredItem(key, fallback) {
+      const stored = localStorage.getItem(key);
+      if (!stored) return fallback;
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error("Failed to parse stored item", key, e);
+        return fallback;
+      }
+    }
+
     // State Store
     let state = {
       darkMode: false,
       activeTab: 'dashboard',
-      products: [
-        { id: 1, name: "Royal Satin Blue", category: "Interior Paint", sku: "PF-RSB-01", qty: 24, price: 45.00, status: "In Stock", rgb: "#1E3A8A" },
-        { id: 2, name: "Matte Crimson Accent", category: "Interior Paint", sku: "PF-MCA-02", qty: 3, price: 52.00, status: "Low Stock", rgb: "#EF4444" },
-        { id: 3, name: "Classic Navy Matte", category: "Wall Paint", sku: "PF-CNM-03", sku_raw: "PF-CNM-03", qty: 142, price: 38.00, status: "In Stock", rgb: "#1e293b" },
-        { id: 4, name: "EcoPure Primer White", category: "Primers", sku: "PF-EPW-04", qty: 5, price: 29.99, status: "Low Stock", rgb: "#dfdfdf" },
-        { id: 5, name: "Warm Beige Silk", category: "Interior Paint", sku: "PF-WBS-05", qty: 84, price: 40.00, status: "In Stock", rgb: "#d97706" },
-        { id: 6, name: "Forest Canopy Satin", category: "Exterior Paint", sku: "PF-FCS-06", qty: 18, price: 48.00, status: "In Stock", rgb: "#065f46" }
-      ],
+      products: getStoredItem("pf_products", initialProducts),
       selectedCategory: 'All',
       cart: [],
-      logs: [
-        { time: new Date().toLocaleTimeString(), item: "Royal Satin Blue", change: "+10 L", balance: 24, operator: "John Doe" },
-        { time: new Date(Date.now() - 3600000).toLocaleTimeString(), item: "Matte Crimson Accent", change: "-5 L", balance: 3, operator: "Jane Smith" },
-      ],
+      logs: getStoredItem("pf_logs", initialLogs),
       completedInvoice: null
     };
+
+    // Save helper
+    function saveState() {
+      localStorage.setItem("pf_products", JSON.stringify(state.products));
+      localStorage.setItem("pf_logs", JSON.stringify(state.logs));
+    }
 
     // Initialize Page
     document.addEventListener("DOMContentLoaded", () => {
@@ -1184,6 +1207,7 @@
 
     function deleteProduct(id) {
       state.products = state.products.filter(p => p.id !== id);
+      saveState();
       renderProducts();
       renderPOSProducts();
       updateKPICards();
@@ -1266,6 +1290,8 @@
         balance: stock,
         operator: "John Doe"
       });
+
+      saveState();
 
       renderProducts();
       renderPOSProducts();
@@ -1439,6 +1465,8 @@
         });
       });
 
+      saveState();
+
       // Clear checkout structures
       state.cart = [];
       renderCart();
@@ -1576,7 +1604,7 @@
       // Recalculate today sales & revenue from logs
       const checkoutsToday = state.logs.filter(l => l.change.startsWith("-"));
       const revenueToday = checkoutsToday.reduce((sum, log) => {
-        const prod = state.products.find(p => p.name === log.item) || posProducts.find(p => p.name === log.item);
+        const prod = state.products.find(p => p.name === log.item);
         const lts = Math.abs(parseInt(log.change));
         const price = prod ? prod.price : 40.00;
         return sum + (lts * price);

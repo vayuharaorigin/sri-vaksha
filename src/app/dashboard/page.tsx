@@ -27,6 +27,7 @@ import {
   Line
 } from "recharts";
 import Link from "next/link";
+import { useInventory } from "@/context/InventoryContext";
 
 // Mock Data
 const salesData = [
@@ -43,18 +44,6 @@ const miniChartData = [
   { value: 10 }, { value: 15 }, { value: 8 }, { value: 12 }, { value: 20 }, { value: 18 }, { value: 25 }
 ];
 
-const recentActivity = [
-  { id: 1, action: "Stock updated", item: "Royal Satin Blue (5L)", time: "10 mins ago", type: "success" },
-  { id: 2, action: "Order completed", item: "#INV-84920 - $340.00", time: "1 hour ago", type: "info" },
-  { id: 3, action: "Low stock alert", item: "Matte Black Trim Paint", time: "2 hours ago", type: "warning" },
-  { id: 4, action: "New product added", item: "Sunset Gold Gloss (1L)", time: "5 hours ago", type: "success" },
-];
-
-const lowStockItems = [
-  { name: "Matte Crimson Accent", sku: "M-CRIM-01", stock: 3, minStock: 10, color: "#EF4444" },
-  { name: "EcoPure Primer White", sku: "E-PRIM-W", stock: 5, minStock: 20, color: "#F59E0B" },
-];
-
 const bestSellers = [
   { name: "Classic Navy Matte (5L)", category: "Wall Paint", sales: 142, revenue: "$7,810", percent: 85 },
   { name: "Ultra Gloss Clear Coat", sku: "U-COAT-G", sales: 98, revenue: "$4,410", percent: 65 },
@@ -62,6 +51,28 @@ const bestSellers = [
 ];
 
 export default function DashboardPage() {
+  const { products, logs } = useInventory();
+
+  // 1. Total Stock calculation
+  const totalStock = products.reduce((sum, p) => sum + p.qty, 0);
+
+  // 2. Today's sales count (from logs)
+  const checkoutsToday = logs.filter(l => l.change.startsWith("-"));
+  const salesCount = checkoutsToday.length;
+
+  // 3. Dynamic Revenue calculation
+  const revenueToday = checkoutsToday.reduce((sum, log) => {
+    const qtySold = Math.abs(parseInt(log.change)) || 0;
+    const prod = products.find(p => p.name === log.item);
+    const price = prod ? prod.price : 40.00;
+    return sum + (qtySold * price);
+  }, 0);
+  const finalRevenue = revenueToday * 1.08;
+
+  // 4. Low stock levels
+  const lowStockItems = products.filter(p => p.qty <= 5);
+  const lowStockCount = lowStockItems.length;
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -97,8 +108,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">1,248</span>
-              <span className="text-xs text-green-600 font-medium">+12%</span>
+              <span className="text-2xl font-bold">{products.length}</span>
+              <span className="text-xs text-green-600 font-medium">Active</span>
             </div>
             {/* Sparkline */}
             <div className="h-10 mt-4 w-full">
@@ -128,8 +139,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">8,490</span>
-              <span className="text-xs text-green-600 font-medium">+4.2%</span>
+              <span className="text-2xl font-bold">{totalStock} L</span>
+              <span className="text-xs text-green-600 font-medium">Live</span>
             </div>
             {/* Sparkline */}
             <div className="h-10 mt-4 w-full">
@@ -159,8 +170,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">42</span>
-              <span className="text-xs text-green-600 font-medium">+18%</span>
+              <span className="text-2xl font-bold">{salesCount}</span>
+              <span className="text-xs text-green-600 font-medium">Orders</span>
             </div>
             {/* Sparkline */}
             <div className="h-10 mt-4 w-full">
@@ -190,8 +201,8 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">$14,240</span>
-              <span className="text-xs text-green-600 font-medium">+8.5%</span>
+              <span className="text-2xl font-bold">${finalRevenue.toFixed(2)}</span>
+              <span className="text-xs text-green-600 font-medium">Today</span>
             </div>
             {/* Sparkline */}
             <div className="h-10 mt-4 w-full">
@@ -221,13 +232,24 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-destructive">2</span>
-              <span className="text-xs text-red-600 font-medium">Critical</span>
+              <span className={`text-2xl font-bold ${lowStockCount > 0 ? "text-destructive" : "text-green-600"}`}>
+                {lowStockCount}
+              </span>
+              <span className="text-xs text-muted-foreground font-medium">Alerts</span>
             </div>
-            {/* Minimal static warnings list */}
+            {/* Dynamic warnings list */}
             <div className="text-[11px] text-muted-foreground mt-4 space-y-1">
-              <div className="truncate flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block"/>Crimson Accent (3 left)</div>
-              <div className="truncate flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"/>Primer White (5 left)</div>
+              {lowStockItems.slice(0, 2).map((item) => (
+                <div key={item.id} className="truncate flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block"/>
+                  {item.name} ({item.qty} L left)
+                </div>
+              ))}
+              {lowStockItems.length === 0 && (
+                <div className="truncate text-green-600 font-semibold flex items-center gap-1.5">
+                  ✓ Stock levels healthy!
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -361,20 +383,26 @@ export default function DashboardPage() {
               <CardDescription>Real-time updates of operations.</CardDescription>
             </CardHeader>
             <CardContent className="relative pl-6 border-l border-border ml-3 space-y-6">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="relative">
-                  {/* Timeline dot */}
-                  <span className={`absolute -left-[30px] top-1 w-3.5 h-3.5 rounded-full border-2 border-background ring-1 ring-border ${
-                    activity.type === "success" ? "bg-emerald-500" :
-                    activity.type === "warning" ? "bg-amber-500" : "bg-blue-500"
-                  }`} />
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{activity.item}</p>
-                    <span className="text-[10px] text-muted-foreground block mt-1">{activity.time}</span>
+              {logs.slice(0, 4).map((activity) => {
+                const isAdded = activity.change.startsWith("+");
+                const isDeducted = activity.change.startsWith("-");
+                return (
+                  <div key={activity.id} className="relative">
+                    {/* Timeline dot */}
+                    <span className={`absolute -left-[30px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-background ring-1 ring-border ${
+                      isAdded ? "bg-emerald-500" :
+                      isDeducted ? "bg-blue-500" : "bg-red-500"
+                    }`} />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        {isAdded ? "Stock Restocked" : isDeducted ? "Order Completed" : "Catalog Adjusted"}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{activity.item} ({activity.change})</p>
+                      <span className="text-[10px] text-muted-foreground block mt-1">{activity.time}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
         </div>

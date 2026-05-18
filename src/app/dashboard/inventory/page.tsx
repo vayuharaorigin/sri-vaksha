@@ -3,13 +3,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "lucide-react";
+import { useInventory } from "@/context/InventoryContext";
 
 export default function InventoryPage() {
-  const stockHistory = [
-    { id: 1, item: "Royal Satin Blue", change: "+10 L", qty: 24, user: "John Doe", time: "10 mins ago" },
-    { id: 2, item: "Matte Crimson Accent", change: "-5 L", qty: 3, user: "Jane Smith", time: "2 hours ago" },
-    { id: 3, item: "EcoPure Primer White", change: "-10 L", qty: 5, user: "John Doe", time: "Yesterday" },
-  ];
+  const { logs } = useInventory();
 
   return (
     <div className="space-y-8">
@@ -34,7 +31,7 @@ export default function InventoryPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {stockHistory.map((log) => (
+            {logs.map((log) => (
               <TableRow key={log.id}>
                 <TableCell className="font-semibold">{log.item}</TableCell>
                 <TableCell className={`font-bold ${log.change.startsWith("+") ? "text-green-600" : "text-red-600"}`}>
