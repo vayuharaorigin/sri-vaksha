@@ -77,14 +77,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             );
           })}
         </nav>
-
-        <div className="p-4 border-t border-border">
-          <div className="bg-gradient-to-br from-accent/10 to-blue-500/10 p-4 rounded-2xl">
-            <p className="text-sm font-medium">Pro Plan</p>
-            <p className="text-xs text-muted-foreground mt-1 mb-3">You're on the premium tier</p>
-            <Button variant="outline" size="sm" className="w-full text-xs h-8 bg-white/50">Upgrade</Button>
-          </div>
-        </div>
       </aside>
 
       {/* Main Content */}
