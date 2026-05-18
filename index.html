@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaintFlow | Premium Inventory Management</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              DEFAULT: '#111111',
+              dark: '#fafafa'
+            },
+            accent: {
+              DEFAULT: '#2563EB',
+              hover: '#1d4ed8'
+            },
+            success: '#16A34A',
+            warning: '#F59E0B',
+            danger: '#EF4444',
+          },
+          borderRadius: {
+            '2xl': '1rem',
+            '3xl': '1.5rem',
+            '4xl': '2rem',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style type="text/css">
+    /* Premium Glassmorphic Styles */
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .dark .glass {
+      background: rgba(24, 24, 27, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Radial Mesh Gradient Background */
+    .login-bg {
+      background-color: #F5F7FA;
+      background-image: 
+        radial-gradient(at 0% 0%, hsla(220,100%,90%,0.3) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, hsla(250,100%,90%,0.2) 0, transparent 50%), 
+        radial-gradient(at 100% 0%, hsla(220,100%,90%,0.3) 0, transparent 50%);
+    }
+    .dark .login-bg {
+      background-color: #09090b;
+      background-image: 
+        radial-gradient(at 0% 0%, hsla(253,16%,7%,0.15) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, hsla(225,39%,30%,0.25) 0, transparent 50%), 
+        radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+    }
+
+    /* Floating Animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #e5e7eb;
+      border-radius: 99px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #27272a;
+    }
+
+    /* Print styling definitions */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .print-hidden {
+        display: none !important;
+      }
+      .print-block {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 99999 !important;
+        background: white !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body class="h-full bg-[#F5F7FA] text-[#111111] dark:bg-[#09090b] dark:text-[#fafafa] font-sans antialiased transition-colors duration-300">
+
+  <!-- ==================== 1. LOGIN SCREEN ==================== -->
+  <div id="loginPage" class="min-h-screen login-bg flex items-center justify-center p-4 relative overflow-hidden">
+    <!-- Blurs -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+
+    <div class="w-full max-w-[420px] transition-all duration-500">
+      <div class="glass rounded-[2rem] p-10 shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400"></div>
+        
+        <div class="flex flex-col items-center mb-8">
+          <div class="w-16 h-16 bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-zinc-100 dark:to-zinc-300 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <i data-lucide="droplet" class="w-8 h-8 text-white dark:text-black"></i>
+          </div>
+          <h1 class="text-3xl font-heading font-extrabold tracking-tight">Welcome Back</h1>
+          <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2 font-medium">Sign in to PaintFlow SaaS workspace</p>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-5">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-slate-600 dark:text-zinc-300 tracking-wide uppercase ml-1">Email Address</label>
+            <input 
+              type="email" 
+              placeholder="hello@business.com" 
+              required
+              class="w-full h-12 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-black/50 px-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            >
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center ml-1">
+              <label class="text-xs font-bold text-slate-600 dark:text-zinc-300 tracking-wide uppercase">Password</label>
+              <a href="#" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Forgot?</a>
+            </div>
+            <input 
+              type="password" 
+              placeholder="••••••••" 
+              required
+              class="w-full h-12 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-black/50 px-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            >
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full h-12 mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+          >
+            Sign In to Dashboard
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+        <div class="mt-8 text-center text-[10px] text-slate-400">
+          Enterprise Security Verification Activated
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 2. MAIN DASHBOARD FRAMEWORK ==================== -->
+  <div id="mainDashboard" class="hidden min-h-screen flex print-hidden">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="hidden lg:flex flex-col w-64 border-r border-slate-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-xl h-screen sticky top-0">
+      <!-- Logo -->
+      <div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-zinc-800">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
+            <i data-lucide="droplet" class="w-4 h-4 text-white dark:text-black"></i>
+          </div>
+          <span class="font-heading font-extrabold text-lg tracking-tight">PaintFlow</span>
+        </div>
+      </div>
+
+      <!-- Navigation links -->
+      <nav class="flex-1 px-4 py-6 space-y-1.5">
+        <button onclick="switchTab('dashboard')" class="tab-link w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-950/20" data-tab="dashboard">
+          <i data-lucide="layout-dashboard" class="w-4.5 h-4.5"></i>
+          Dashboard
+        </button>
+        <button onclick="switchTab('products')" class="tab-link w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100" data-tab="products">
+          <i data-lucide="package" class="w-4.5 h-4.5"></i>
+          Products
+        </button>
+        <button onclick="switchTab('sell')" class="tab-link w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100" data-tab="sell">
+          <i data-lucide="shopping-cart" class="w-4.5 h-4.5"></i>
+          Sell Paint
+        </button>
+        <button onclick="switchTab('inventory')" class="tab-link w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100" data-tab="inventory">
+          <i data-lucide="boxes" class="w-4.5 h-4.5"></i>
+          Inventory Logs
+        </button>
+        <button onclick="switchTab('analytics')" class="tab-link w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100" data-tab="analytics">
+          <i data-lucide="bar-chart-3" class="w-4.5 h-4.5"></i>
+          Analytics
+        </button>
+        <button onclick="switchTab('reports')" class="tab-link w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100" data-tab="reports">
+          <i data-lucide="file-text" class="w-4.5 h-4.5"></i>
+          Reports
+        </button>
+        <button onclick="switchTab('settings')" class="tab-link w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100" data-tab="settings">
+          <i data-lucide="settings" class="w-4.5 h-4.5"></i>
+          Settings
+        </button>
+      </nav>
+
+      <!-- Upgrade Box -->
+      <div class="p-4 border-t border-slate-200 dark:border-zinc-800">
+        <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 p-4 rounded-2xl">
+          <p class="text-sm font-bold font-heading">Pro Plan Active</p>
+          <p class="text-xs text-slate-400 dark:text-zinc-400 mt-1 mb-3">Enterprise features unlocked</p>
+          <button class="w-full h-8 bg-white dark:bg-zinc-900 text-xs font-bold rounded-lg border hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all">Support Desk</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT PANEL -->
+    <main class="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <!-- TOP NAV -->
+      <header class="h-16 border-b border-slate-200 dark:border-zinc-800 bg-white/40 dark:bg-zinc-950/40 backdrop-blur-xl flex items-center justify-between px-6 lg:px-8 sticky top-0 z-30">
+        <!-- Mobile navbar toggler -->
+        <div class="flex items-center gap-4 lg:hidden">
+          <button onclick="toggleMobileSidebar()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-900">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <div class="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
+            <i data-lucide="droplet" class="w-4 h-4 text-white dark:text-black"></i>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="hidden lg:flex items-center flex-1 max-w-md relative">
+          <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+          <input 
+            placeholder="Search paint inventory, logs, invoice IDs..." 
+            class="pl-10 h-10 w-full rounded-xl bg-slate-100 dark:bg-zinc-900 border-none text-xs outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+        <!-- System Controls -->
+        <div class="flex items-center gap-3 ml-auto">
+          <!-- Darkmode quick trigger -->
+          <button onclick="toggleDarkMode()" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-900 relative">
+            <i data-lucide="moon" class="w-4.5 h-4.5 text-slate-500 dark:text-zinc-400 block dark:hidden"></i>
+            <i data-lucide="sun" class="w-4.5 h-4.5 text-slate-400 hidden dark:block"></i>
+          </button>
+          
+          <button class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-900 relative">
+            <i data-lucide="bell" class="w-4.5 h-4.5 text-slate-500 dark:text-zinc-400"></i>
+            <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-600 rounded-full border-2 border-white dark:border-black"></span>
+          </button>
+
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 p-0.5 shadow cursor-pointer">
+            <div class="w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-white dark:border-zinc-950">
+              <span class="text-xs font-bold text-black">JD</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ROUTED TABS WRAPPER -->
+      <div class="flex-1 overflow-auto p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto space-y-8">
+          
+          <!-- ==================== TAB: CORE DASHBOARD ==================== -->
+          <section id="tab-dashboard" class="space-y-8">
+            <!-- Title -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h1 class="text-3xl font-heading font-extrabold tracking-tight">Dashboard Overview</h1>
+                <p class="text-sm text-slate-400 dark:text-zinc-400 mt-1">Real-time status reports from PaintFlow.</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button onclick="switchTab('reports')" class="h-10 px-4 border rounded-xl text-xs font-bold bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i> Export CSV
+                </button>
+                <button onclick="switchTab('sell')" class="h-10 px-4 bg-black dark:bg-white text-white dark:text-black rounded-xl text-xs font-bold hover:opacity-90 transition-all flex items-center gap-1.5 shadow-md">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i> Register Sale
+                </button>
+              </div>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              <!-- KPI Card 1 -->
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-5 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                <div class="flex justify-between items-center pb-2">
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Products</span>
+                  <div class="p-2 bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 rounded-lg">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                <div class="flex items-baseline gap-1.5 mt-2">
+                  <span id="kpi-total-products" class="text-2xl font-bold font-heading">6</span>
+                  <span class="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded-full">+12%</span>
+                </div>
+                <div class="h-8 mt-4"><canvas id="sparkline1" class="w-full h-full"></canvas></div>
+              </div>
+              <!-- KPI Card 2 -->
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-5 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                <div class="flex justify-between items-center pb-2">
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Total Stock</span>
+                  <div class="p-2 bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 rounded-lg">
+                    <i data-lucide="boxes" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                <div class="flex items-baseline gap-1.5 mt-2">
+                  <span id="kpi-total-stock" class="text-2xl font-bold font-heading">276 L</span>
+                  <span class="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded-full">+4.2%</span>
+                </div>
+                <div class="h-8 mt-4"><canvas id="sparkline2" class="w-full h-full"></canvas></div>
+              </div>
+              <!-- KPI Card 3 -->
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-5 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                <div class="flex justify-between items-center pb-2">
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Today Sales</span>
+                  <div class="p-2 bg-indigo-50 text-indigo-600 dark:bg-indigo-950/20 dark:text-indigo-400 rounded-lg">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                <div class="flex items-baseline gap-1.5 mt-2">
+                  <span id="kpi-today-sales" class="text-2xl font-bold font-heading">0</span>
+                  <span class="text-[10px] text-slate-400 font-medium">Standard</span>
+                </div>
+                <div class="h-8 mt-4"><canvas id="sparkline3" class="w-full h-full"></canvas></div>
+              </div>
+              <!-- KPI Card 4 -->
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-5 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                <div class="flex justify-between items-center pb-2">
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Revenue</span>
+                  <div class="p-2 bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400 rounded-lg">
+                    <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                <div class="flex items-baseline gap-1.5 mt-2">
+                  <span id="kpi-revenue" class="text-2xl font-bold font-heading">$0.00</span>
+                  <span class="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded-full">+8.5%</span>
+                </div>
+                <div class="h-8 mt-4"><canvas id="sparkline4" class="w-full h-full"></canvas></div>
+              </div>
+              <!-- KPI Card 5 (Low Stock alert) -->
+              <div class="bg-card dark:bg-zinc-900 border border-rose-200 dark:border-rose-950 rounded-2xl p-5 hover:shadow-md transition-all duration-300 relative group overflow-hidden">
+                <div class="flex justify-between items-center pb-2">
+                  <span class="text-xs font-bold text-rose-500 uppercase tracking-wide">Low Stock</span>
+                  <div class="p-2 bg-rose-50 text-rose-600 dark:bg-rose-950/20 dark:text-rose-400 rounded-lg animate-pulse">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                  </div>
+                </div>
+                <div class="flex items-baseline gap-1.5 mt-2">
+                  <span id="kpi-low-stock" class="text-2xl font-bold text-rose-600 font-heading">2 Colors</span>
+                  <span class="text-[10px] text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded-full">Critical</span>
+                </div>
+                <!-- Mini Low Stock Items details -->
+                <div class="text-[10px] text-slate-400 mt-4 space-y-1 leading-tight">
+                  <div class="truncate flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Matte Crimson Accent (3L left)</div>
+                  <div class="truncate flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>EcoPure Primer White (5L left)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dashboard Analytics Splitting Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              
+              <!-- Core weekly analytics chart -->
+              <div class="lg:col-span-2 bg-card dark:bg-zinc-900 border rounded-[2rem] p-6 lg:p-8 space-y-6">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h3 class="font-heading font-extrabold text-lg">Sales Analysis</h3>
+                    <p class="text-xs text-slate-400 dark:text-zinc-400 mt-0.5">Calculated based on daily billing throughput.</p>
+                  </div>
+                  <button onclick="switchTab('analytics')" class="text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1 hover:underline">
+                    Detailed Metrics <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+                <!-- Rich Spline Chart on HTML Canvas -->
+                <div class="h-72 w-full relative">
+                  <canvas id="salesChartCanvas" class="w-full h-full"></canvas>
+                </div>
+              </div>
+
+              <!-- Sidebar Panel: Activities & Quick RESTOCK suggestions -->
+              <div class="space-y-8">
+                <!-- PaintFlow Quick Counter Launcher card -->
+                <div class="bg-gradient-to-br from-neutral-950 to-neutral-900 dark:from-zinc-900 dark:to-zinc-950 border text-white rounded-[2rem] p-6 space-y-4">
+                  <div class="space-y-1">
+                    <h3 class="font-heading font-extrabold text-lg flex items-center gap-1.5 text-white">
+                      <i data-lucide="paint-brush" class="w-4.5 h-4.5 text-blue-400"></i> PaintFlow POS
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Fast-track physical order receipt entry.</p>
+                  </div>
+                  <div class="space-y-2">
+                    <button onclick="switchTab('sell')" class="w-full h-11 bg-white text-black hover:bg-slate-100 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow">
+                      Launch POS Terminal <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="switchTab('products')" class="w-full h-11 bg-transparent hover:bg-white/10 text-white rounded-xl text-xs font-bold border border-white/20">
+                      Catalog Directory
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Recent operations ledger -->
+                <div class="bg-card dark:bg-zinc-900 border rounded-[2rem] p-6 space-y-4">
+                  <div>
+                    <h3 class="font-heading font-extrabold text-base">Activity Timeline</h3>
+                    <p class="text-xs text-slate-400 dark:text-zinc-400">Live operational ledger logs</p>
+                  </div>
+                  <div id="dashboard-activities-list" class="space-y-4 relative pl-5 border-l border-slate-200 dark:border-zinc-800 ml-2">
+                    <!-- Dynamic logs -->
+                    <div class="relative">
+                      <span class="absolute -left-[27px] top-1 w-3 h-3 rounded-full bg-emerald-500 border border-white dark:border-zinc-900"></span>
+                      <p class="text-xs font-bold">Stock levels created</p>
+                      <p class="text-[10px] text-slate-400">6 Paints loaded to inventory</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ==================== TAB: PRODUCTS LISTING ==================== -->
+          <section id="tab-products" class="hidden space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 class="text-3xl font-heading font-extrabold tracking-tight">Products Catalog</h1>
+                <p class="text-sm text-slate-400 dark:text-zinc-400 mt-1">Add, preview, modify, or delete paint swatches.</p>
+              </div>
+              <button onclick="openAddProductModal()" class="h-11 px-5 bg-black dark:bg-white text-white dark:text-black rounded-xl text-xs font-bold hover:opacity-90 transition-all flex items-center gap-1.5 shadow-md">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Paint Swatch
+              </button>
+            </div>
+
+            <!-- Filters & Search -->
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div class="w-full max-w-sm relative">
+                <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                <input 
+                  id="products-search-input"
+                  oninput="renderProducts()"
+                  placeholder="Search name, code, SKU..." 
+                  class="pl-10 h-12 w-full rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                >
+              </div>
+              <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 w-full md:w-auto">
+                <button onclick="filterCategory('All')" class="category-btn px-4 py-2 rounded-xl text-xs font-bold border transition-all bg-black text-white dark:bg-white dark:text-black" data-category="All">All</button>
+                <button onclick="filterCategory('Interior Paint')" class="category-btn px-4 py-2 rounded-xl text-xs font-bold border transition-all bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400" data-category="Interior Paint">Interior Paint</button>
+                <button onclick="filterCategory('Exterior Paint')" class="category-btn px-4 py-2 rounded-xl text-xs font-bold border transition-all bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400" data-category="Exterior Paint">Exterior Paint</button>
+                <button onclick="filterCategory('Wall Paint')" class="category-btn px-4 py-2 rounded-xl text-xs font-bold border transition-all bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400" data-category="Wall Paint">Wall Paint</button>
+                <button onclick="filterCategory('Primers')" class="category-btn px-4 py-2 rounded-xl text-xs font-bold border transition-all bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400" data-category="Primers">Primers</button>
+              </div>
+            </div>
+
+            <!-- Table of products -->
+            <div class="bg-card dark:bg-zinc-900 border rounded-[2rem] overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                  <thead>
+                    <tr class="border-b border-slate-200 dark:border-zinc-800 text-slate-400 text-xs font-bold uppercase">
+                      <th class="py-4 px-6 w-[100px]">Swatch</th>
+                      <th class="py-4 px-6">Product Details</th>
+                      <th class="py-4 px-6">Category</th>
+                      <th class="py-4 px-6">SKU Code</th>
+                      <th class="py-4 px-6 text-right">Stock Level</th>
+                      <th class="py-4 px-6 text-right">Price per Liter</th>
+                      <th class="py-4 px-6">Status</th>
+                      <th class="py-4 px-6 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="products-table-body" class="divide-y divide-slate-100 dark:divide-zinc-800/50">
+                    <!-- Dynamic rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== TAB: POS SELL FLOW ==================== -->
+          <section id="tab-sell" class="hidden space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <!-- Grid of active products -->
+              <div class="lg:col-span-2 space-y-6">
+                <div>
+                  <h1 class="text-3xl font-heading font-extrabold tracking-tight">Sell Paint</h1>
+                  <p class="text-sm text-slate-400 dark:text-zinc-400 mt-1">POS Checkout: Add color swatches directly to cart.</p>
+                </div>
+                
+                <!-- Search bar -->
+                <div class="relative">
+                  <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                  <input 
+                    id="pos-search-input"
+                    oninput="renderPOSProducts()"
+                    placeholder="Quick search by name, color swatch, SKU code..." 
+                    class="w-full h-14 pl-12 pr-4 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl outline-none text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+                  >
+                </div>
+
+                <!-- Paint card list -->
+                <div id="pos-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  <!-- Dynamic cards -->
+                </div>
+              </div>
+
+              <!-- Cart checkout side-panel -->
+              <div class="space-y-6">
+                <div class="bg-card dark:bg-zinc-900 border rounded-[2rem] shadow-lg overflow-hidden flex flex-col sticky top-24 max-h-[calc(100vh-140px)]">
+                  <div class="p-6 border-b flex items-center justify-between">
+                    <h2 class="font-heading font-extrabold text-lg flex items-center gap-2">
+                      <i data-lucide="shopping-cart" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                      Checkout Cart
+                    </h2>
+                    <span id="cart-item-count" class="bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 text-xs font-bold px-2.5 py-1 rounded-full">0 items</span>
+                  </div>
+
+                  <!-- Cart items container -->
+                  <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 min-h-[220px]">
+                    <!-- Dynamic cart items -->
+                  </div>
+
+                  <!-- Checkout summary -->
+                  <div class="p-6 border-t bg-slate-50/50 dark:bg-zinc-900/50 space-y-4">
+                    <div class="space-y-2 text-xs font-medium">
+                      <div class="flex justify-between text-slate-400">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">$0.00</span>
+                      </div>
+                      <div class="flex justify-between text-slate-400">
+                        <span>Tax (8%)</span>
+                        <span id="cart-tax">$0.00</span>
+                      </div>
+                      <div class="flex justify-between font-extrabold text-base text-foreground pt-2 border-t border-slate-200 dark:border-zinc-800">
+                        <span>Total Due</span>
+                        <span id="cart-total" class="text-blue-600 dark:text-blue-400">$0.00</span>
+                      </div>
+                    </div>
+
+                    <button 
+                      id="checkout-btn"
+                      onclick="processCheckout()" 
+                      disabled
+                      class="w-full h-12 bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-sm shadow-md transition-all"
+                    >
+                      Checkout Order
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== TAB: INVENTORY LOGS ==================== -->
+          <section id="tab-inventory" class="hidden space-y-8">
+            <div>
+              <h1 class="text-3xl font-heading font-extrabold tracking-tight">Inventory Ledger</h1>
+              <p class="text-sm text-slate-400 dark:text-zinc-400 mt-1">Complete structural records of all paint volume changes.</p>
+            </div>
+
+            <div class="bg-card dark:bg-zinc-900 border rounded-[2rem] overflow-hidden shadow-sm">
+              <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-zinc-800 text-slate-400 text-xs font-bold uppercase">
+                    <th class="py-4 px-6">Timestamp</th>
+                    <th class="py-4 px-6">Paint Item</th>
+                    <th class="py-4 px-6">Change Type</th>
+                    <th class="py-4 px-6 text-right">Adjustment Volume</th>
+                    <th class="py-4 px-6 text-right">Current Inventory</th>
+                    <th class="py-4 px-6">System Operator</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-ledger-body" class="divide-y divide-slate-100 dark:divide-zinc-800/50">
+                  <!-- Dynamic logs -->
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ==================== TAB: DETAILED ANALYTICS ==================== -->
+          <section id="tab-analytics" class="hidden space-y-8">
+            <div>
+              <h1 class="text-3xl font-heading font-extrabold tracking-tight">Business Analytics</h1>
+              <p class="text-sm text-slate-400 dark:text-zinc-400 mt-1">Stripe-level growth, revenue metrics and breakdown ratios.</p>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-6 space-y-2">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Monthly Profit</p>
+                <h3 class="text-3xl font-bold font-heading">$27,580</h3>
+                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +22.4% vs prev
+                </span>
+              </div>
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-6 space-y-2">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">New Accounts</p>
+                <h3 class="text-3xl font-bold font-heading">348 Clients</h3>
+                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +14.2% vs prev
+                </span>
+              </div>
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-6 space-y-2">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Average Ticket Size</p>
+                <h3 class="text-3xl font-bold font-heading">$184.50</h3>
+                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                  <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +3.8% vs prev
+                </span>
+              </div>
+            </div>
+
+            <!-- Main Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <!-- Area chart for profit metrics -->
+              <div class="lg:col-span-2 bg-card dark:bg-zinc-900 border rounded-[2rem] p-6 lg:p-8 space-y-6">
+                <div>
+                  <h3 class="font-heading font-extrabold text-lg">Sales & Profit Trends</h3>
+                  <p class="text-xs text-slate-400 dark:text-zinc-400">Comparative representation across the fiscal half.</p>
+                </div>
+                <div class="h-80 w-full">
+                  <canvas id="profitChartCanvas" class="w-full h-full"></canvas>
+                </div>
+              </div>
+
+              <!-- Bar chart category breakdowns -->
+              <div class="bg-card dark:bg-zinc-900 border rounded-[2rem] p-6 lg:p-8 space-y-6 flex flex-col">
+                <div>
+                  <h3 class="font-heading font-extrabold text-lg">Category Distribution</h3>
+                  <p class="text-xs text-slate-400 dark:text-zinc-400">Total volume share breakdown.</p>
+                </div>
+                <div class="h-60 w-full flex-1">
+                  <canvas id="categoryChartCanvas" class="w-full h-full"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== TAB: REPORTS CENTER ==================== -->
+          <section id="tab-reports" class="hidden space-y-8">
+            <div>
+              <h1 class="text-3xl font-heading font-extrabold tracking-tight">Reports Audit Center</h1>
+              <p class="text-sm text-slate-400 dark:text-zinc-400 mt-1">Export ledgers, tax filings, and suppliers run-rate audits.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-6 flex flex-col justify-between h-48 hover:shadow-md transition-all">
+                <div class="flex justify-between items-start">
+                  <div class="space-y-1">
+                    <span class="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/20 dark:text-blue-400 px-2 py-0.5 rounded-full uppercase">PDF</span>
+                    <h3 class="font-bold text-base pt-2">Monthly Sales Ledger</h3>
+                    <p class="text-xs text-slate-400">Period: May 2026</p>
+                  </div>
+                  <div class="p-2.5 bg-slate-100 dark:bg-zinc-800 rounded-xl text-slate-500">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center pt-4 border-t">
+                  <span class="text-xs text-slate-400">Size: 1.2 MB</span>
+                  <button class="h-8 px-3 border hover:bg-slate-50 dark:hover:bg-zinc-800 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Download
+                  </button>
+                </div>
+              </div>
+
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-6 flex flex-col justify-between h-48 hover:shadow-md transition-all">
+                <div class="flex justify-between items-start">
+                  <div class="space-y-1">
+                    <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full uppercase">XLSX</span>
+                    <h3 class="font-bold text-base pt-2">Stock Turnover Valuation</h3>
+                    <p class="text-xs text-slate-400">Period: Q1 Audit</p>
+                  </div>
+                  <div class="p-2.5 bg-slate-100 dark:bg-zinc-800 rounded-xl text-slate-500">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center pt-4 border-t">
+                  <span class="text-xs text-slate-400">Size: 4.8 MB</span>
+                  <button class="h-8 px-3 border hover:bg-slate-50 dark:hover:bg-zinc-800 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Download
+                  </button>
+                </div>
+              </div>
+
+              <div class="bg-card dark:bg-zinc-900 border rounded-2xl p-6 flex flex-col justify-between h-48 hover:shadow-md transition-all">
+                <div class="flex justify-between items-start">
+                  <div class="space-y-1">
+                    <span class="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/20 dark:text-blue-400 px-2 py-0.5 rounded-full uppercase">PDF</span>
+                    <h3 class="font-bold text-base pt-2">Supplier Run-Rate Audit</h3>
+                    <p class="text-xs text-slate-400">Period: Q1 Audit</p>
+                  </div>
+                  <div class="p-2.5 bg-slate-100 dark:bg-zinc-800 rounded-xl text-slate-500">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center pt-4 border-t">
+                  <span class="text-xs text-slate-400">Size: 850 KB</span>
+                  <button class="h-8 px-3 border hover:bg-slate-50 dark:hover:bg-zinc-800 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Download
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ==================== TAB: SYSTEM SETTINGS ==================== -->
+          <section id="tab-settings" class="hidden space-y-8">
+            <div>
+              <h1 class="text-3xl font-heading font-extrabold tracking-tight">Workspace Settings</h1>
+              <p class="text-sm text-slate-400 dark:text-zinc-400 mt-1">Configure profile thresholds, display themes, and credentials.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <!-- Left Side: Profile -->
+              <div class="lg:col-span-2 bg-card dark:bg-zinc-900 border rounded-[2rem] p-6 lg:p-8 space-y-6">
+                <h3 class="font-heading font-extrabold text-lg">Shop Profile</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-slate-500 dark:text-zinc-400">Shop Name</label>
+                    <input value="PaintFlow Admin NY" class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none">
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-slate-500 dark:text-zinc-400">Authorized Operator</label>
+                    <input value="John Doe" class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none">
+                  </div>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs font-semibold text-slate-500 dark:text-zinc-400">Support / Contact Email Address</label>
+                  <input value="contact@paintflow.co" class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none">
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs font-semibold text-slate-500 dark:text-zinc-400">Shop Physical Address</label>
+                  <input value="100 Luxury Avenue, Suite A, New York, NY" class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none">
+                </div>
+                <button class="h-11 px-6 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-xl flex items-center gap-1.5 shadow">
+                  <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Details
+                </button>
+              </div>
+
+              <!-- Right Side: Preferences and Statuses -->
+              <div class="space-y-6">
+                <!-- Theme Toggle -->
+                <div class="bg-card dark:bg-zinc-900 border rounded-[2rem] p-6 space-y-4">
+                  <h3 class="font-heading font-extrabold text-base">Display Preferences</h3>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-xs font-bold">Theme Setting</p>
+                      <p class="text-[10px] text-slate-400">Toggle light / dark presentation</p>
+                    </div>
+                    <button onclick="toggleDarkMode()" class="h-9 px-3 border dark:border-zinc-800 bg-slate-50 hover:bg-slate-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-bold rounded-xl transition-all flex items-center gap-1">
+                      <i data-lucide="moon" class="w-3.5 h-3.5 dark:hidden"></i>
+                      <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block"></i>
+                      Toggle Theme
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Enterprise DB connections -->
+                <div class="bg-card dark:bg-zinc-900 border rounded-[2rem] p-6 space-y-4">
+                  <h3 class="font-heading font-extrabold text-base">Backend Connections</h3>
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400 font-medium">Supabase Database Node</span>
+                    <span class="px-2 py-0.5 font-bold text-green-600 bg-green-50 rounded-full">Connected</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== 3. MODAL: ADD PRODUCT ==================== -->
+  <div id="addProductModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-card dark:bg-zinc-900 w-full max-w-[800px] rounded-[2.5rem] border border-slate-200 dark:border-zinc-800 shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-5 h-[90vh] max-h-[640px]">
+      
+      <!-- Form Section -->
+      <div class="md:col-span-3 p-8 lg:p-10 space-y-6 overflow-y-auto flex flex-col justify-between">
+        <div>
+          <h2 class="text-2xl font-heading font-extrabold tracking-tight">Add New Paint</h2>
+          <p class="text-xs text-slate-400 dark:text-zinc-400 mt-1">Configure paint catalog attributes and swatches.</p>
+        </div>
+
+        <form id="newProductForm" onsubmit="saveNewProduct(event)" class="space-y-4">
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Paint Name</label>
+            <input id="form-name" oninput="updateLivePreview()" placeholder="e.g. Imperial Forest Green" required class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">SKU Code</label>
+              <input id="form-sku" oninput="updateLivePreview()" placeholder="PF-IFG-09" required class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Category</label>
+              <select id="form-category" onchange="updateLivePreview()" class="w-full h-11 px-3 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none">
+                <option value="Interior Paint">Interior Paint</option>
+                <option value="Exterior Paint">Exterior Paint</option>
+                <option value="Wall Paint">Wall Paint</option>
+                <option value="Primers">Primers</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Initial Stock (L)</label>
+              <input id="form-stock" type="number" oninput="updateLivePreview()" value="20" required class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Price ($ / L)</label>
+              <input id="form-price" type="number" step="0.01" oninput="updateLivePreview()" value="45.00" required class="w-full h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Color Swatch Hex</label>
+            <div class="flex items-center gap-3">
+              <input id="form-color-picker" type="color" oninput="syncColorPickerToText()" value="#0f5132" class="w-11 h-11 border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden cursor-pointer p-0 bg-transparent">
+              <input id="form-color-hex" oninput="syncColorTextToPicker()" value="#0F5132" class="flex-1 h-11 px-4 border rounded-xl bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-sm outline-none">
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2.5 pt-4">
+            <button type="button" onclick="closeAddProductModal()" class="h-11 px-4 border rounded-xl text-xs font-bold bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all">Cancel</button>
+            <button type="submit" class="h-11 px-5 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-xl shadow">Save Color</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preview Section -->
+      <div class="md:col-span-2 bg-slate-50 dark:bg-zinc-950 p-8 border-l border-slate-100 dark:border-zinc-800 flex flex-col justify-between">
+        <div>
+          <h3 class="font-heading font-extrabold text-sm uppercase tracking-wider text-slate-400">Live Card Preview</h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">Mock representation inside physical catalog.</p>
+        </div>
+
+        <!-- Interactive Paint Card -->
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl border border-slate-200/60 dark:border-zinc-800 shadow-xl overflow-hidden p-5 space-y-4">
+          <div id="preview-swatch-box" class="w-full h-32 rounded-2xl flex items-center justify-center text-white shadow-inner border border-black/10 relative overflow-hidden" style="background-color: #0f5132;">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+            <i data-lucide="paint-brush" class="w-10 h-10 drop-shadow-md text-white"></i>
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between items-baseline">
+              <h4 id="preview-name" class="font-bold text-base truncate max-w-[130px]">Imperial Forest Green</h4>
+              <span id="preview-price" class="text-sm font-bold text-blue-600 dark:text-blue-400">$45.00</span>
+            </div>
+            <p id="preview-category" class="text-[11px] text-slate-400">Interior Paint</p>
+            <div class="flex justify-between items-center pt-2">
+              <span id="preview-sku" class="text-[10px] font-mono bg-slate-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-slate-400">PF-IFG-09</span>
+              <span id="preview-stock" class="text-[10px] font-bold text-green-600">20 L left</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-[10px] text-center text-slate-400">
+          Swatches match exactly to client views.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 4. MODAL: SUCCESS CHECKOUT SPLIT VIEW ==================== -->
+  <div id="checkoutSuccessModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 print:hidden">
+    <div class="bg-card dark:bg-zinc-900 w-full max-w-[850px] rounded-[2.5rem] border border-slate-200 dark:border-zinc-800 shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-5 h-[90vh] max-h-[660px]">
+      
+      <!-- Success Meta Info (Left 2 columns) -->
+      <div class="md:col-span-2 p-8 flex flex-col justify-between items-center text-center border-r border-slate-200 dark:border-zinc-800 h-full">
+        <div class="space-y-6 my-auto">
+          <div class="flex justify-center">
+            <div class="w-16 h-16 bg-green-50 text-green-600 dark:bg-green-950/20 dark:text-green-400 rounded-full flex items-center justify-center shadow-inner">
+              <i data-lucide="check-circle" class="w-10 h-10"></i>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h2 class="text-2xl font-heading font-extrabold tracking-tight">Sale Completed</h2>
+            <p class="text-xs text-slate-400 dark:text-zinc-400">Inventory levels have been adjusted and billing logged to history logs.</p>
+          </div>
+
+          <div class="bg-slate-100 dark:bg-zinc-800/50 py-3.5 px-4 rounded-2xl text-left space-y-1.5 w-full max-w-[250px] mx-auto text-[11px] font-semibold">
+            <div class="flex justify-between"><span class="text-slate-400">Invoice ID</span><span id="bill-invoice-id" class="font-mono text-black dark:text-white">INV-839201</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Amount Paid</span><span id="bill-invoice-total" class="text-blue-600 dark:text-blue-400">$0.00</span></div>
+          </div>
+        </div>
+
+        <div class="w-full space-y-2 mt-4">
+          <button onclick="window.print()" class="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Print Invoice Bill
+          </button>
+          <button onclick="closeCheckoutSuccessModal()" class="w-full h-11 border hover:bg-slate-50 dark:hover:bg-zinc-800 text-xs font-bold rounded-xl transition-all">
+            Dismiss View
+          </button>
+        </div>
+      </div>
+
+      <!-- Receipt Sheet Preview (Right 3 columns) -->
+      <div class="md:col-span-3 bg-slate-50/50 dark:bg-zinc-950/20 p-8 overflow-y-auto flex flex-col justify-between h-full">
+        <div class="space-y-6">
+          <div class="flex justify-between items-start border-b border-slate-200 dark:border-zinc-800 pb-4">
+            <div>
+              <h3 class="font-heading font-extrabold text-lg">PaintFlow Inc.</h3>
+              <p class="text-[10px] text-slate-400">100 Luxury Avenue, New York, NY</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[9px] uppercase font-bold tracking-wider bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 px-2.5 py-0.5 rounded-full">Paid Receipt</span>
+              <p id="bill-invoice-date" class="text-[9px] text-slate-400 mt-2">May 18, 2026</p>
+            </div>
+          </div>
+
+          <div class="text-[11px] space-y-0.5 font-medium">
+            <p class="text-slate-400">Billed To:</p>
+            <p class="text-black dark:text-white font-bold">Counter Customer (Walk-in)</p>
+            <p class="text-[10px] text-slate-400">Method: Credit Card Terminal</p>
+          </div>
+
+          <div class="space-y-3">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Purchase Details</p>
+            <div id="bill-items-list" class="space-y-2.5">
+              <!-- Dynamic receipt items -->
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 dark:border-zinc-800 pt-4 mt-6 space-y-2 text-[11px]">
+          <div class="flex justify-between text-slate-400"><span>Subtotal</span><span id="bill-subtotal">$0.00</span></div>
+          <div class="flex justify-between text-slate-400"><span>Sales Tax (8%)</span><span id="bill-tax">$0.00</span></div>
+          <div class="flex justify-between text-sm font-extrabold text-black dark:text-white border-t border-slate-200 dark:border-zinc-800 pt-2">
+            <span>Total Paid</span>
+            <span id="bill-total">$0.00</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 5. PURE PRINT ONLY RECEIPT INVOICE ==================== -->
+  <div id="purePrintReceipt" class="hidden bg-white text-black p-10 max-w-[800px] mx-auto space-y-8 font-sans">
+    <!-- Header -->
+    <div class="flex justify-between items-start border-b pb-6">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight">PaintFlow</h1>
+        <p class="text-sm text-gray-500 mt-1">Premium Paint & Coatings Shop</p>
+        <p class="text-xs text-gray-400">100 Luxury Avenue, New York, NY</p>
+      </div>
+      <div class="text-right text-sm">
+        <h2 class="text-lg font-bold text-gray-800">TAX INVOICE</h2>
+        <p class="text-xs text-gray-500 mt-1">Invoice ID: <span id="print-invoice-id">INV-0000</span></p>
+        <p class="text-xs text-gray-500">Date: <span id="print-invoice-date">Date</span></p>
+      </div>
+    </div>
+
+    <!-- Bill to -->
+    <div class="text-sm space-y-1">
+      <h3 class="font-bold text-gray-700">Billed To:</h3>
+      <p class="text-gray-600">Counter Customer (Walk-in)</p>
+      <p class="text-gray-400 text-xs">Payment Method: Card Transaction</p>
+    </div>
+
+    <!-- Items table -->
+    <table class="w-full text-left text-sm border-collapse">
+      <thead>
+        <tr class="border-b border-gray-200 text-gray-500 text-xs">
+          <th class="py-2.5">Paint Swatch</th>
+          <th class="py-2.5">Item Name</th>
+          <th class="py-2.5">SKU Code</th>
+          <th class="py-2.5 text-right">Price</th>
+          <th class="py-2.5 text-right">Volume</th>
+          <th class="py-2.5 text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody id="print-items-body" class="divide-y divide-gray-100 text-gray-700">
+        <!-- Dynamic print items -->
+      </tbody>
+    </table>
+
+    <!-- Pricing Summary -->
+    <div class="flex justify-end pt-4">
+      <div class="w-64 space-y-2 text-sm">
+        <div class="flex justify-between text-gray-500">
+          <span>Subtotal</span>
+          <span id="print-subtotal">$0.00</span>
+        </div>
+        <div class="flex justify-between text-gray-500">
+          <span>Sales Tax (8%)</span>
+          <span id="print-tax">$0.00</span>
+        </div>
+        <div class="flex justify-between font-bold text-gray-900 border-t pt-2 text-base">
+          <span>Total Paid</span>
+          <span id="print-total">$0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center text-xs text-gray-400 pt-16 border-t">
+      <p>Thank you for buying premium paint swatches from PaintFlow!</p>
+      <p class="mt-1">For support, write to contact@paintflow.co</p>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT STATE CONTROL ==================== -->
+  <script>
+    // State Store
+    let state = {
+      darkMode: false,
+      activeTab: 'dashboard',
+      products: [
+        { id: 1, name: "Royal Satin Blue", category: "Interior Paint", sku: "PF-RSB-01", qty: 24, price: 45.00, status: "In Stock", rgb: "#1E3A8A" },
+        { id: 2, name: "Matte Crimson Accent", category: "Interior Paint", sku: "PF-MCA-02", qty: 3, price: 52.00, status: "Low Stock", rgb: "#EF4444" },
+        { id: 3, name: "Classic Navy Matte", category: "Wall Paint", sku: "PF-CNM-03", sku_raw: "PF-CNM-03", qty: 142, price: 38.00, status: "In Stock", rgb: "#1e293b" },
+        { id: 4, name: "EcoPure Primer White", category: "Primers", sku: "PF-EPW-04", qty: 5, price: 29.99, status: "Low Stock", rgb: "#dfdfdf" },
+        { id: 5, name: "Warm Beige Silk", category: "Interior Paint", sku: "PF-WBS-05", qty: 84, price: 40.00, status: "In Stock", rgb: "#d97706" },
+        { id: 6, name: "Forest Canopy Satin", category: "Exterior Paint", sku: "PF-FCS-06", qty: 18, price: 48.00, status: "In Stock", rgb: "#065f46" }
+      ],
+      selectedCategory: 'All',
+      cart: [],
+      logs: [
+        { time: new Date().toLocaleTimeString(), item: "Royal Satin Blue", change: "+10 L", balance: 24, operator: "John Doe" },
+        { time: new Date(Date.now() - 3600000).toLocaleTimeString(), item: "Matte Crimson Accent", change: "-5 L", balance: 3, operator: "Jane Smith" },
+      ],
+      completedInvoice: null
+    };
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+    });
+
+    function handleLogin(e) {
+      e.preventDefault();
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('mainDashboard').classList.remove('hidden');
+      
+      // Load charts & render lists
+      setTimeout(() => {
+        renderProducts();
+        renderPOSProducts();
+        renderLogs();
+        drawSparklines();
+        drawSalesChart();
+        drawProfitChart();
+        drawCategoryChart();
+      }, 100);
+    }
+
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      
+      // Update link styles
+      document.querySelectorAll('.tab-link').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.classList.add('text-blue-600', 'bg-blue-50', 'dark:text-blue-400', 'dark:bg-blue-950/20');
+          btn.classList.remove('text-slate-500', 'hover:bg-slate-100', 'dark:text-zinc-400', 'dark:hover:bg-zinc-900');
+        } else {
+          btn.classList.remove('text-blue-600', 'bg-blue-50', 'dark:text-blue-400', 'dark:bg-blue-950/20');
+          btn.classList.add('text-slate-500', 'hover:bg-slate-100', 'dark:text-zinc-400', 'dark:hover:bg-zinc-900');
+        }
+      });
+
+      // Update sections visibility
+      document.querySelectorAll('main section').forEach(sec => {
+        if (sec.id === `tab-${tabId}`) {
+          sec.classList.remove('hidden');
+        } else {
+          sec.classList.add('hidden');
+        }
+      });
+
+      // Redraw charts if needed
+      if (tabId === 'dashboard') {
+        setTimeout(() => {
+          drawSparklines();
+          drawSalesChart();
+        }, 50);
+      } else if (tabId === 'analytics') {
+        setTimeout(() => {
+          drawProfitChart();
+          drawCategoryChart();
+        }, 50);
+      }
+    }
+
+    function toggleDarkMode() {
+      state.darkMode = !state.darkMode;
+      if (state.darkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      setTimeout(() => {
+        if (state.activeTab === 'dashboard') {
+          drawSalesChart();
+        } else if (state.activeTab === 'analytics') {
+          drawProfitChart();
+          drawCategoryChart();
+        }
+        drawSparklines();
+      }, 100);
+    }
+
+    // ==================== CATALOG CONTROLS ====================
+    function renderProducts() {
+      const searchVal = document.getElementById('products-search-input').value.toLowerCase();
+      const tbody = document.getElementById('products-table-body');
+      tbody.innerHTML = '';
+
+      const filtered = state.products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchVal) || p.sku.toLowerCase().includes(searchVal);
+        const matchesCategory = state.selectedCategory === 'All' || p.category === state.selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
+
+      filtered.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.className = "group border-b border-slate-100 dark:border-zinc-800/50 hover:bg-slate-50/50 dark:hover:bg-zinc-800/30";
+        tr.innerHTML = `
+          <td class="py-4 px-6">
+            <span class="w-9 h-9 rounded-xl border border-black/15 shadow-inner inline-block" style="background-color: ${p.rgb};"></span>
+          </td>
+          <td class="py-4 px-6 font-bold text-slate-800 dark:text-zinc-100">${p.name}</td>
+          <td class="py-4 px-6 text-slate-400">${p.category}</td>
+          <td class="py-4 px-6 font-mono text-xs text-slate-400">${p.sku}</td>
+          <td class="py-4 px-6 text-right font-semibold">${p.qty} L</td>
+          <td class="py-4 px-6 text-right font-bold">$${p.price.toFixed(2)}</td>
+          <td class="py-4 px-6">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+              p.qty <= 5 
+                ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400' 
+                : 'bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400'
+            }">
+              <span class="w-1.5 h-1.5 rounded-full ${p.qty <= 5 ? 'bg-rose-500' : 'bg-green-500'}"></span>
+              ${p.qty <= 5 ? 'Low Stock' : 'In Stock'}
+            </span>
+          </td>
+          <td class="py-4 px-6 text-right">
+            <button onclick="deleteProduct(${p.id})" class="p-2 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-slate-400 dark:hover:bg-rose-950/20 transition-all">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      lucide.createIcons();
+      updateKPICards();
+    }
+
+    function filterCategory(cat) {
+      state.selectedCategory = cat;
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        if (btn.getAttribute('data-category') === cat) {
+          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-bold border transition-all bg-black text-white dark:bg-white dark:text-black";
+        } else {
+          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-bold border transition-all bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400";
+        }
+      });
+      renderProducts();
+    }
+
+    function deleteProduct(id) {
+      state.products = state.products.filter(p => p.id !== id);
+      renderProducts();
+      renderPOSProducts();
+      updateKPICards();
+    }
+
+    // Add Modal Actions
+    function openAddProductModal() {
+      document.getElementById('addProductModal').classList.remove('hidden');
+      updateLivePreview();
+    }
+    function closeAddProductModal() {
+      document.getElementById('addProductModal').classList.add('hidden');
+    }
+
+    function syncColorPickerToText() {
+      const picker = document.getElementById('form-color-picker');
+      const text = document.getElementById('form-color-hex');
+      text.value = picker.value.toUpperCase();
+      updateLivePreview();
+    }
+    function syncColorTextToPicker() {
+      const picker = document.getElementById('form-color-picker');
+      const text = document.getElementById('form-color-hex');
+      if (text.value.startsWith('#') && text.value.length === 7) {
+        picker.value = text.value;
+      }
+      updateLivePreview();
+    }
+
+    function updateLivePreview() {
+      const name = document.getElementById('form-name').value || "Product Name";
+      const sku = document.getElementById('form-sku').value || "SKU-CODE";
+      const cat = document.getElementById('form-category').value;
+      const stock = document.getElementById('form-stock').value || 0;
+      const price = parseFloat(document.getElementById('form-price').value || 0);
+      const color = document.getElementById('form-color-hex').value;
+
+      document.getElementById('preview-name').innerText = name;
+      document.getElementById('preview-sku').innerText = sku;
+      document.getElementById('preview-category').innerText = cat;
+      document.getElementById('preview-stock').innerText = `${stock} L left`;
+      document.getElementById('preview-price').innerText = `$${price.toFixed(2)}`;
+      document.getElementById('preview-swatch-box').style.backgroundColor = color;
+      
+      const stockSpan = document.getElementById('preview-stock');
+      if (stock <= 5) {
+        stockSpan.className = "text-[10px] font-bold text-rose-500";
+      } else {
+        stockSpan.className = "text-[10px] font-bold text-green-600";
+      }
+    }
+
+    function saveNewProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById('form-name').value;
+      const sku = document.getElementById('form-sku').value;
+      const cat = document.getElementById('form-category').value;
+      const stock = parseInt(document.getElementById('form-stock').value);
+      const price = parseFloat(document.getElementById('form-price').value);
+      const color = document.getElementById('form-color-hex').value;
+
+      const newP = {
+        id: state.products.length + 1,
+        name: name,
+        category: cat,
+        sku: sku,
+        qty: stock,
+        price: price,
+        status: stock <= 5 ? "Low Stock" : "In Stock",
+        rgb: color
+      };
+
+      state.products.unshift(newP);
+      
+      // Log operation
+      state.logs.unshift({
+        time: new Date().toLocaleTimeString(),
+        item: name,
+        change: `+${stock} L`,
+        balance: stock,
+        operator: "John Doe"
+      });
+
+      renderProducts();
+      renderPOSProducts();
+      renderLogs();
+      closeAddProductModal();
+
+      // Reset Form fields
+      document.getElementById('newProductForm').reset();
+    }
+
+    // ==================== POS SELL CONTROLS ====================
+    function renderPOSProducts() {
+      const grid = document.getElementById('pos-products-grid');
+      const searchVal = document.getElementById('pos-search-input').value.toLowerCase();
+      grid.innerHTML = '';
+
+      const filtered = state.products.filter(p => 
+        p.name.toLowerCase().includes(searchVal) || p.sku.toLowerCase().includes(searchVal)
+      );
+
+      filtered.forEach(p => {
+        const outOfStock = p.qty <= 0;
+        const card = document.createElement('div');
+        card.className = "overflow-hidden border border-slate-200/80 dark:border-zinc-800 rounded-3xl bg-card dark:bg-zinc-900 group relative shadow-sm";
+        card.innerHTML = `
+          ${outOfStock ? '<div class="absolute inset-0 bg-white/70 dark:bg-black/75 z-10 flex items-center justify-center"><span class="bg-rose-500 text-white px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Out of Stock</span></div>' : ''}
+          <div class="w-full h-24 relative shadow-inner" style="background-color: ${p.rgb};">
+            <div class="absolute bottom-2 right-2 bg-black/60 text-white text-[9px] px-2 py-0.5 rounded font-mono">${p.sku}</div>
+          </div>
+          <div class="p-4 space-y-3">
+            <div>
+              <h3 class="font-bold text-slate-800 dark:text-zinc-100 truncate">${p.name}</h3>
+              <div class="flex justify-between items-baseline mt-1">
+                <span class="text-sm font-extrabold text-blue-600 dark:text-blue-400">$${p.price.toFixed(2)}</span>
+                <span class="text-[10px] text-slate-400">${p.qty} L left</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-1 pt-1">
+              <button onclick="addToCart(${p.id}, 1)" ${outOfStock ? 'disabled' : ''} class="h-7 text-[10px] font-bold rounded-lg border hover:bg-slate-50 dark:hover:bg-zinc-800 dark:border-zinc-800 transition-all">+1L</button>
+              <button onclick="addToCart(${p.id}, 5)" ${p.qty < 5 ? 'disabled' : ''} class="h-7 text-[10px] font-bold rounded-lg border hover:bg-slate-50 dark:hover:bg-zinc-800 dark:border-zinc-800 transition-all">+5L</button>
+              <button onclick="addToCart(${p.id}, 10)" ${p.qty < 10 ? 'disabled' : ''} class="h-7 text-[10px] font-bold rounded-lg border hover:bg-slate-50 dark:hover:bg-zinc-800 dark:border-zinc-800 transition-all">+10L</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function addToCart(pId, qty) {
+      const prod = state.products.find(p => p.id === pId);
+      if (!prod || prod.qty < qty) return;
+
+      const cartItem = state.cart.find(c => c.product.id === pId);
+      if (cartItem) {
+        if (cartItem.quantity + qty > prod.qty) return;
+        cartItem.quantity += qty;
+      } else {
+        state.cart.push({ product: prod, quantity: qty });
+      }
+
+      renderCart();
+    }
+
+    function updateCartQty(pId, delta) {
+      const item = state.cart.find(c => c.product.id === pId);
+      if (!item) return;
+
+      const nextQty = item.quantity + delta;
+      if (nextQty <= 0) {
+        state.cart = state.cart.filter(c => c.product.id !== pId);
+      } else {
+        if (nextQty > item.product.qty) return;
+        item.quantity = nextQty;
+      }
+      renderCart();
+    }
+
+    function removeFromCart(pId) {
+      state.cart = state.cart.filter(c => c.product.id !== pId);
+      renderCart();
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cart-items-container');
+      container.innerHTML = '';
+
+      if (state.cart.length === 0) {
+        container.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-center space-y-2 py-10">
+            <i data-lucide="shopping-cart" class="w-10 h-10 text-slate-300"></i>
+            <p class="text-xs font-bold text-slate-400">Your cart is empty</p>
+            <p class="text-[10px] text-slate-400/80">Click "+L" buttons on color cards to buy.</p>
+          </div>
+        `;
+        document.getElementById('checkout-btn').disabled = true;
+      } else {
+        state.cart.forEach(item => {
+          const div = document.createElement('div');
+          div.className = "flex gap-3 items-center justify-between border-b border-slate-100 dark:border-zinc-800/40 pb-3 last:border-0 last:pb-0";
+          div.innerHTML = `
+            <span class="w-8 h-8 rounded-lg border border-black/10 flex-shrink-0" style="background-color: ${item.product.rgb};"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold truncate">${item.product.name}</p>
+              <p class="text-[10px] text-slate-400">$${item.product.price.toFixed(2)} / L</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button onclick="updateCartQty(${item.product.id}, -1)" class="w-6 h-6 border rounded-md hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs">-</button>
+              <span class="text-xs font-bold w-5 text-center">${item.quantity}</span>
+              <button onclick="updateCartQty(${item.product.id}, 1)" class="w-6 h-6 border rounded-md hover:bg-slate-50 dark:hover:bg-zinc-800 flex items-center justify-center text-xs">+</button>
+            </div>
+            <button onclick="removeFromCart(${item.product.id})" class="p-1 hover:text-rose-600 text-slate-400 dark:hover:bg-zinc-800 rounded">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          `;
+          container.appendChild(div);
+        });
+        document.getElementById('checkout-btn').disabled = false;
+      }
+
+      // Calculate totals
+      const subtotal = state.cart.reduce((sum, c) => sum + (c.product.price * c.quantity), 0);
+      const tax = subtotal * 0.08;
+      const total = subtotal * 1.08;
+
+      document.getElementById('cart-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+      document.getElementById('cart-tax').innerText = `$${tax.toFixed(2)}`;
+      document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+      document.getElementById('cart-item-count').innerText = `${state.cart.length} items`;
+      
+      lucide.createIcons();
+    }
+
+    function processCheckout() {
+      if (state.cart.length === 0) return;
+
+      const subtotal = state.cart.reduce((sum, c) => sum + (c.product.price * c.quantity), 0);
+      const tax = subtotal * 0.08;
+      const total = subtotal * 1.08;
+      const invoiceId = `INV-${Math.floor(100000 + Math.random() * 900000)}`;
+
+      // Save locked invoice details
+      state.completedInvoice = {
+        id: invoiceId,
+        date: new Date().toLocaleString(),
+        items: state.cart.map(c => ({
+          name: c.product.name,
+          sku: c.product.sku,
+          price: c.product.price,
+          quantity: c.quantity,
+          rgb: c.product.rgb
+        })),
+        subtotal: subtotal,
+        tax: tax,
+        total: total
+      };
+
+      // Deduct stock levels & add inventory logs
+      state.cart.forEach(c => {
+        const p = state.products.find(prod => prod.id === c.product.id);
+        if (p) {
+          p.qty -= c.quantity;
+          if (p.qty <= 5) p.status = "Low Stock";
+        }
+        
+        state.logs.unshift({
+          time: new Date().toLocaleTimeString(),
+          item: c.product.name,
+          change: `-${c.quantity} L`,
+          balance: p ? p.qty : 0,
+          operator: "John Doe"
+        });
+      });
+
+      // Clear checkout structures
+      state.cart = [];
+      renderCart();
+      renderProducts();
+      renderPOSProducts();
+      renderLogs();
+      updateKPICards();
+
+      // Open Success dialog
+      openCheckoutSuccessModal();
+    }
+
+    function openCheckoutSuccessModal() {
+      const inv = state.completedInvoice;
+      if (!inv) return;
+
+      // Populate interactive modal
+      document.getElementById('bill-invoice-id').innerText = inv.id;
+      document.getElementById('bill-invoice-total').innerText = `$${inv.total.toFixed(2)}`;
+      document.getElementById('bill-invoice-date').innerText = inv.date;
+      document.getElementById('bill-subtotal').innerText = `$${inv.subtotal.toFixed(2)}`;
+      document.getElementById('bill-tax').innerText = `$${inv.tax.toFixed(2)}`;
+      document.getElementById('bill-total').innerText = `$${inv.total.toFixed(2)}`;
+
+      const list = document.getElementById('bill-items-list');
+      list.innerHTML = '';
+      inv.items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between text-xs py-2 border-b border-slate-100 dark:border-zinc-800/40 last:border-0";
+        div.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-4.5 h-4.5 rounded-full border border-black/10 flex-shrink-0" style="background-color: ${item.rgb};"></span>
+            <div class="truncate">
+              <p class="font-bold text-slate-800 dark:text-zinc-100 truncate">${item.name}</p>
+              <p class="text-[9px] text-slate-400 font-mono">${item.sku}</p>
+            </div>
+          </div>
+          <div class="text-right pl-3 flex-shrink-0">
+            <p class="font-bold">${item.quantity} L x $${item.price.toFixed(2)}</p>
+            <p class="text-[10px] text-blue-600 dark:text-blue-400 font-bold">$${(item.price * item.quantity).toFixed(2)}</p>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+
+      // Populate hidden print document
+      document.getElementById('print-invoice-id').innerText = inv.id;
+      document.getElementById('print-invoice-date').innerText = inv.date;
+      document.getElementById('print-subtotal').innerText = `$${inv.subtotal.toFixed(2)}`;
+      document.getElementById('print-tax').innerText = `$${inv.tax.toFixed(2)}`;
+      document.getElementById('print-total').innerText = `$${inv.total.toFixed(2)}`;
+
+      const printBody = document.getElementById('print-items-body');
+      printBody.innerHTML = '';
+      inv.items.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-gray-100 text-gray-700";
+        tr.innerHTML = `
+          <td class="py-3"><span class="w-4.5 h-4.5 rounded-full inline-block border border-gray-200" style="background-color: ${item.rgb};"></span></td>
+          <td class="py-3 font-bold">${item.name}</td>
+          <td class="py-3 font-mono text-xs text-gray-400">${item.sku}</td>
+          <td class="py-3 text-right">$${item.price.toFixed(2)}</td>
+          <td class="py-3 text-right">${item.quantity} L</td>
+          <td class="py-3 text-right font-bold">$${(item.price * item.quantity).toFixed(2)}</td>
+        `;
+        printBody.appendChild(tr);
+      });
+
+      document.getElementById('checkoutSuccessModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeCheckoutSuccessModal() {
+      document.getElementById('checkoutSuccessModal').classList.add('hidden');
+    }
+
+    // ==================== OPERATIONAL LOGS ====================
+    function renderLogs() {
+      const tbody = document.getElementById('inventory-ledger-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      state.logs.forEach(log => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-100 dark:border-zinc-800/40 text-xs hover:bg-slate-50/50 dark:hover:bg-zinc-800/30";
+        tr.innerHTML = `
+          <td class="py-4 px-6 text-slate-400">${log.time}</td>
+          <td class="py-4 px-6 font-bold text-slate-800 dark:text-zinc-100">${log.item}</td>
+          <td class="py-4 px-6">
+            <span class="px-2 py-0.5 rounded-md font-bold uppercase text-[9px] ${
+              log.change.startsWith("+") 
+                ? "bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400" 
+                : "bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400"
+            }">
+              ${log.change.startsWith("+") ? "Stock Added" : "Stock Deducted"}
+            </span>
+          </td>
+          <td class="py-4 px-6 text-right font-bold ${log.change.startsWith("+") ? "text-green-600" : "text-rose-600"}">${log.change}</td>
+          <td class="py-4 px-6 text-right font-semibold">${log.balance} L</td>
+          <td class="py-4 px-6 text-slate-400">${log.operator}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Update timeline in dashboard
+      const timeline = document.getElementById('dashboard-activities-list');
+      if (timeline) {
+        timeline.innerHTML = '';
+        state.logs.slice(0, 4).forEach(log => {
+          const div = document.createElement('div');
+          div.className = "relative space-y-0.5";
+          div.innerHTML = `
+            <span class="absolute -left-[27px] top-1.5 w-3 h-3 rounded-full border border-white dark:border-zinc-900 ${
+              log.change.startsWith("+") ? "bg-emerald-500" : "bg-blue-500"
+            }"></span>
+            <p class="text-xs font-bold">${log.change.startsWith("+") ? "Catalog restocked" : "Order processed"}</p>
+            <p class="text-[10px] text-slate-400 truncate">${log.item} (${log.change})</p>
+            <span class="text-[9px] text-slate-400/80 block">${log.time}</span>
+          `;
+          timeline.appendChild(div);
+        });
+      }
+    }
+
+    // ==================== KPI SYNCHRONIZERS ====================
+    function updateKPICards() {
+      const activeProducts = state.products.length;
+      const activeStock = state.products.reduce((sum, p) => sum + p.qty, 0);
+      const lowStockCount = state.products.filter(p => p.qty <= 5).length;
+
+      document.getElementById('kpi-total-products').innerText = activeProducts;
+      document.getElementById('kpi-total-stock').innerText = `${activeStock} L`;
+      document.getElementById('kpi-low-stock').innerText = `${lowStockCount} Colors`;
+
+      // Recalculate today sales & revenue from logs
+      const checkoutsToday = state.logs.filter(l => l.change.startsWith("-"));
+      const revenueToday = checkoutsToday.reduce((sum, log) => {
+        const prod = state.products.find(p => p.name === log.item) || posProducts.find(p => p.name === log.item);
+        const lts = Math.abs(parseInt(log.change));
+        const price = prod ? prod.price : 40.00;
+        return sum + (lts * price);
+      }, 0);
+
+      document.getElementById('kpi-today-sales').innerText = checkoutsToday.length;
+      document.getElementById('kpi-revenue').innerText = `$${(revenueToday * 1.08).toFixed(2)}`;
+    }
+
+    // ==================== CANVAS CHART GENERATORS ====================
+    function drawSparklines() {
+      const sparklines = ['sparkline1', 'sparkline2', 'sparkline3', 'sparkline4'];
+      const isDark = document.documentElement.classList.contains('dark');
+      const stroke = isDark ? '#3b82f6' : '#2563EB';
+
+      sparklines.forEach(id => {
+        const canvas = document.getElementById(id);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        // Resize for retina
+        canvas.width = canvas.parentElement.clientWidth * 2;
+        canvas.height = 32 * 2;
+        ctx.scale(2, 2);
+
+        const data = [10, 15, 8, 14, 22, 16, 25];
+        const step = canvas.parentElement.clientWidth / 6;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 1.5;
+        
+        data.forEach((val, i) => {
+          const x = i * step;
+          const y = 32 - (val / 28) * 28;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      });
+    }
+
+    function drawSalesChart() {
+      const canvas = document.getElementById('salesChartCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const container = canvas.parentElement;
+      canvas.width = container.clientWidth * 2;
+      canvas.height = container.clientHeight * 2;
+      ctx.scale(2, 2);
+
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Data spline
+      const salesPoints = [24, 13.9, 98, 39, 48, 38, 43];
+      const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const step = w / 6.5;
+
+      // Draw Grid
+      ctx.strokeStyle = document.documentElement.classList.contains('dark') ? '#27272a' : '#f1f5f9';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        const y = 20 + i * ((h - 50) / 4);
+        ctx.beginPath();
+        ctx.moveTo(30, y);
+        ctx.lineTo(w - 10, y);
+        ctx.stroke();
+      }
+
+      // Spline line
+      ctx.beginPath();
+      const points = salesPoints.map((val, i) => ({
+        x: 40 + i * step,
+        y: h - 30 - (val / 110) * (h - 60)
+      }));
+
+      ctx.strokeStyle = '#2563EB';
+      ctx.lineWidth = 2.5;
+
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 0; i < points.length - 1; i++) {
+        const xc = (points[i].x + points[i + 1].x) / 2;
+        const yc = (points[i].y + points[i + 1].y) / 2;
+        ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+      }
+      ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+      ctx.stroke();
+
+      // Spline Fill Gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, 'rgba(37, 99, 235, 0.25)');
+      grad.addColorStop(1, 'rgba(37, 99, 235, 0)');
+
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, h - 30);
+      points.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.lineTo(points[points.length - 1].x, h - 30);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Draw Labels
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px Inter';
+      points.forEach((p, i) => {
+        ctx.fillText(labels[i], p.x - 8, h - 10);
+      });
+    }
+
+    function drawProfitChart() {
+      const canvas = document.getElementById('profitChartCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const w = canvas.parentElement.clientWidth;
+      const h = canvas.parentElement.clientHeight;
+      canvas.width = w * 2;
+      canvas.height = h * 2;
+      ctx.scale(2, 2);
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Comparative splines: Revenue & Profit
+      const revenue = [45, 52, 49, 63, 58, 71];
+      const profit = [18, 21, 19.5, 26, 24, 31];
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+      const step = w / 5.5;
+
+      const revPoints = revenue.map((val, i) => ({ x: 30 + i * step, y: h - 30 - (val / 80) * (h - 50) }));
+      const profPoints = profit.map((val, i) => ({ x: 30 + i * step, y: h - 30 - (val / 80) * (h - 50) }));
+
+      // Revenue area fill
+      ctx.beginPath();
+      ctx.moveTo(revPoints[0].x, h - 30);
+      revPoints.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.lineTo(revPoints[revPoints.length - 1].x, h - 30);
+      ctx.closePath();
+      const gradRev = ctx.createLinearGradient(0, 0, 0, h);
+      gradRev.addColorStop(0, 'rgba(37, 99, 235, 0.15)');
+      gradRev.addColorStop(1, 'rgba(37, 99, 235, 0)');
+      ctx.fillStyle = gradRev;
+      ctx.fill();
+
+      // Revenue Stroke
+      ctx.beginPath();
+      ctx.strokeStyle = '#2563EB';
+      ctx.lineWidth = 2.5;
+      ctx.moveTo(revPoints[0].x, revPoints[0].y);
+      revPoints.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.stroke();
+
+      // Profit area fill
+      ctx.beginPath();
+      ctx.moveTo(profPoints[0].x, h - 30);
+      profPoints.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.lineTo(profPoints[profPoints.length - 1].x, h - 30);
+      ctx.closePath();
+      const gradProf = ctx.createLinearGradient(0, 0, 0, h);
+      gradProf.addColorStop(0, 'rgba(22, 163, 74, 0.15)');
+      gradProf.addColorStop(1, 'rgba(22, 163, 74, 0)');
+      ctx.fillStyle = gradProf;
+      ctx.fill();
+
+      // Profit Stroke
+      ctx.beginPath();
+      ctx.strokeStyle = '#16A34A';
+      ctx.lineWidth = 2.5;
+      ctx.moveTo(profPoints[0].x, profPoints[0].y);
+      profPoints.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.stroke();
+
+      // Labels
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px Inter';
+      revPoints.forEach((p, i) => {
+        ctx.fillText(months[i], p.x - 8, h - 10);
+      });
+    }
+
+    function drawCategoryChart() {
+      const canvas = document.getElementById('categoryChartCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const w = canvas.parentElement.clientWidth;
+      const h = canvas.parentElement.clientHeight;
+      canvas.width = w * 2;
+      canvas.height = h * 2;
+      ctx.scale(2, 2);
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Draw vertical columns for category distribution
+      const categories = [
+        { name: "Interior", val: 340, color: "#2563EB" },
+        { name: "Exterior", val: 210, color: "#10B981" },
+        { name: "Wall", val: 180, color: "#8B5CF6" },
+        { name: "Primers", val: 95, color: "#F59E0B" }
+      ];
+
+      const step = w / 4;
+      const barW = 24;
+
+      categories.forEach((cat, i) => {
+        const x = 20 + i * step;
+        const barH = (cat.val / 380) * (h - 60);
+        const y = h - 30 - barH;
+
+        // Draw pill column
+        ctx.fillStyle = cat.color;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barW, barH, [6, 6, 0, 0]);
+        ctx.fill();
+
+        // Print labels
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9px Inter';
+        ctx.fillText(cat.name, x - 2, h - 10);
+        
+        ctx.fillStyle = document.documentElement.classList.contains('dark') ? '#fff' : '#111';
+        ctx.font = 'bold 9px Inter';
+        ctx.fillText(`${cat.val}`, x + 2, y - 6);
+      });
+    }
+  </script>
+</body>
+</html>
