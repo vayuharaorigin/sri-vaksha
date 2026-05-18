@@ -162,7 +162,7 @@ export default function SellPage() {
                   <div>
                     <h3 className="font-semibold text-foreground truncate">{product.name}</h3>
                     <div className="flex justify-between items-baseline mt-1">
-                      <span className="text-sm font-bold text-accent">${product.price.toFixed(2)}</span>
+                      <span className="text-sm font-bold text-accent">₹{product.price.toFixed(2)}</span>
                       <span className="text-xs text-muted-foreground">{product.qty} L left</span>
                     </div>
                   </div>
@@ -232,7 +232,7 @@ export default function SellPage() {
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">{item.product.name}</p>
-                    <p className="text-xs text-muted-foreground">${item.product.price.toFixed(2)} / L</p>
+                    <p className="text-xs text-muted-foreground">₹{item.product.price.toFixed(2)} / L</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button 
@@ -271,15 +271,15 @@ export default function SellPage() {
             <div className="space-y-1.5 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>${total.toFixed(2)}</span>
+                <span>₹{total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
-                <span>Tax (8%)</span>
-                <span>${(total * 0.08).toFixed(2)}</span>
+                <span>GST (8%)</span>
+                <span>₹{(total * 0.08).toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold text-base text-foreground pt-1.5 border-t">
                 <span>Total Due</span>
-                <span>${(total * 1.08).toFixed(2)}</span>
+                <span>₹{(total * 1.08).toFixed(2)}</span>
               </div>
             </div>
 
@@ -320,7 +320,7 @@ export default function SellPage() {
                   
                   <div className="bg-secondary/40 py-3 px-4 rounded-2xl text-left space-y-1 w-full max-w-[260px] mx-auto text-xs">
                     <div className="flex justify-between"><span className="text-muted-foreground">Invoice ID</span><span className="font-mono font-bold">{completedInvoice.id}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Amount Paid</span><span className="font-semibold text-accent">${completedInvoice.total.toFixed(2)}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Amount Paid</span><span className="font-semibold text-accent">₹{completedInvoice.total.toFixed(2)}</span></div>
                   </div>
                 </div>
 
@@ -341,8 +341,8 @@ export default function SellPage() {
                   {/* Bill Header */}
                   <div className="flex justify-between items-start border-b pb-4">
                     <div>
-                      <h3 className="font-bold text-xl tracking-tight text-foreground">PaintFlow Inc.</h3>
-                      <p className="text-[11px] text-muted-foreground">100 Luxury Avenue, New York, NY</p>
+                      <h3 className="font-bold text-xl tracking-tight text-foreground">PaintFlow India</h3>
+                      <p className="text-[11px] text-muted-foreground">100 Luxury Avenue, Mumbai, India</p>
                     </div>
                     <div className="text-right">
                       <span className="text-xs uppercase font-extrabold tracking-wider bg-accent/10 text-accent px-2 py-0.5 rounded-full">Paid Receipt</span>
@@ -371,8 +371,8 @@ export default function SellPage() {
                             </div>
                           </div>
                           <div className="text-right flex-shrink-0 pl-3">
-                            <p className="font-bold">{item.quantity} L x ${item.price.toFixed(2)}</p>
-                            <p className="text-[10px] text-accent font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                            <p className="font-bold">{item.quantity} L x ₹{item.price.toFixed(2)}</p>
+                            <p className="text-[10px] text-accent font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
                           </div>
                         </div>
                       ))}
@@ -382,11 +382,11 @@ export default function SellPage() {
 
                 {/* Final Total Summary */}
                 <div className="border-t pt-4 mt-6 space-y-2 text-xs">
-                  <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>${completedInvoice.subtotal.toFixed(2)}</span></div>
-                  <div className="flex justify-between text-muted-foreground"><span>Sales Tax (8%)</span><span>${completedInvoice.tax.toFixed(2)}</span></div>
+                  <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>₹{completedInvoice.subtotal.toFixed(2)}</span></div>
+                  <div className="flex justify-between text-muted-foreground"><span>GST (8%)</span><span>₹{completedInvoice.tax.toFixed(2)}</span></div>
                   <div className="flex justify-between text-sm font-extrabold text-foreground border-t pt-2">
                     <span>Total Paid</span>
-                    <span>${completedInvoice.total.toFixed(2)}</span>
+                    <span>₹{completedInvoice.total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -436,9 +436,9 @@ export default function SellPage() {
                   </td>
                   <td className="py-3.5 font-medium">{item.name}</td>
                   <td className="py-3.5 font-mono text-xs text-gray-400">{item.sku}</td>
-                  <td className="py-3.5 text-right">${item.price.toFixed(2)}</td>
+                  <td className="py-3.5 text-right">₹{item.price.toFixed(2)}</td>
                   <td className="py-3.5 text-right">{item.quantity} L</td>
-                  <td className="py-3.5 text-right font-semibold">${(item.price * item.quantity).toFixed(2)}</td>
+                  <td className="py-3.5 text-right font-semibold">₹{(item.price * item.quantity).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -448,15 +448,15 @@ export default function SellPage() {
             <div className="w-64 space-y-2 text-sm">
               <div className="flex justify-between text-gray-500">
                 <span>Subtotal</span>
-                <span>${completedInvoice.subtotal.toFixed(2)}</span>
+                <span>₹{completedInvoice.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-500">
-                <span>Sales Tax (8%)</span>
-                <span>${completedInvoice.tax.toFixed(2)}</span>
+                <span>GST (8%)</span>
+                <span>₹{completedInvoice.tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold text-gray-800 border-t pt-2 text-base">
                 <span>Total Paid</span>
-                <span>${completedInvoice.total.toFixed(2)}</span>
+                <span>₹{completedInvoice.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

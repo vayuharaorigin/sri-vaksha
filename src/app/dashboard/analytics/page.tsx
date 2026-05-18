@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { 
   TrendingUp, 
   ArrowUpRight, 
-  DollarSign, 
+  IndianRupee, 
   Users, 
   ShoppingBag, 
   BarChart4 
@@ -40,9 +40,9 @@ const categorySales = [
 ];
 
 const growthStats = [
-  { title: "Monthly Revenue", value: "$71,000", change: "+22.4%", desc: "vs. previous month", icon: DollarSign, trend: "up" },
+  { title: "Monthly Revenue", value: "₹71,000", change: "+22.4%", desc: "vs. previous month", icon: IndianRupee, trend: "up" },
   { title: "New Customers", value: "348", change: "+14.2%", desc: "vs. previous month", icon: Users, trend: "up" },
-  { title: "Average Order Value", value: "$184.50", change: "+3.8%", desc: "vs. previous month", icon: ShoppingBag, trend: "up" },
+  { title: "Average Order Value", value: "₹184.50", change: "+3.8%", desc: "vs. previous month", icon: ShoppingBag, trend: "up" },
 ];
 
 export default function AnalyticsPage() {
@@ -113,7 +113,7 @@ export default function AnalyticsPage() {
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="month" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v/1000}k`} />
+                  <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `₹${v/1000}k`} />
                   <Tooltip 
                     contentStyle={{ background: "rgba(255,255,255,0.9)", border: "1px solid #E5E7EB", borderRadius: "1rem" }}
                   />

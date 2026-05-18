@@ -6,7 +6,7 @@ import {
   Package, 
   Boxes, 
   ShoppingCart, 
-  DollarSign, 
+  IndianRupee, 
   AlertTriangle, 
   ArrowUpRight, 
   Plus, 
@@ -47,9 +47,9 @@ const miniChartData = [
 ];
 
 const bestSellers = [
-  { name: "Classic Navy Matte (5L)", category: "Wall Paint", sales: 142, revenue: "$7,810", percent: 85 },
-  { name: "Ultra Gloss Clear Coat", sku: "U-COAT-G", sales: 98, revenue: "$4,410", percent: 65 },
-  { name: "Warm Beige Silk (2.5L)", category: "Interior Paint", sales: 84, revenue: "$3,360", percent: 50 },
+  { name: "Classic Navy Matte (5L)", category: "Wall Paint", sales: 142, revenue: "₹7,810", percent: 85 },
+  { name: "Ultra Gloss Clear Coat", sku: "U-COAT-G", sales: 98, revenue: "₹4,410", percent: 65 },
+  { name: "Warm Beige Silk (2.5L)", category: "Interior Paint", sales: 84, revenue: "₹3,360", percent: 50 },
 ];
 
 export default function DashboardPage() {
@@ -219,12 +219,12 @@ export default function DashboardPage() {
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
             <div className="p-2 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
-              <DollarSign size={16} />
+              <IndianRupee size={16} />
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold">${finalRevenue.toFixed(2)}</span>
+              <span className="text-2xl font-bold">₹{finalRevenue.toFixed(2)}</span>
               <span className="text-xs text-green-600 font-medium">Today</span>
             </div>
             {/* Sparkline */}
@@ -468,10 +468,10 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                       <div className="md:col-span-1 p-5 bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-3xl space-y-2">
                         <span className="text-xs text-muted-foreground font-semibold">Today's Revenue Total</span>
-                        <div className="text-3xl font-black text-amber-600 dark:text-amber-400">${finalRevenue.toFixed(2)}</div>
+                        <div className="text-3xl font-black text-amber-600 dark:text-amber-400">₹{finalRevenue.toFixed(2)}</div>
                         <div className="text-[10px] text-muted-foreground">
-                          Subtotal: ${revenueToday.toFixed(2)} <br />
-                          Sales Tax (8%): ${(revenueToday * 0.08).toFixed(2)}
+                          Subtotal: ₹{revenueToday.toFixed(2)} <br />
+                          GST (8%): ₹{(revenueToday * 0.08).toFixed(2)}
                         </div>
                       </div>
                       
@@ -491,7 +491,7 @@ export default function DashboardPage() {
                                     <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: p.rgb }} />
                                     {p.name}
                                   </span>
-                                  <span className="text-muted-foreground">${paintRevenue.toFixed(2)} ({share.toFixed(0)}%)</span>
+                                  <span className="text-muted-foreground">₹{paintRevenue.toFixed(2)} ({share.toFixed(0)}%)</span>
                                 </div>
                                 <div className="w-full bg-slate-200 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
                                   <div className="h-full bg-amber-500 rounded-full" style={{ width: `${share}%` }} />
@@ -585,7 +585,7 @@ export default function DashboardPage() {
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `₹${v}`} />
                     <Tooltip 
                       contentStyle={{ background: "rgba(255,255,255,0.9)", border: "1px solid #E5E7EB", borderRadius: "1rem", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.05)" }}
                       labelStyle={{ fontWeight: "bold", color: "#111" }}

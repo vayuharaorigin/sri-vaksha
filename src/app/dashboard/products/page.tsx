@@ -145,7 +145,7 @@ export default function ProductsPage() {
                   <TableCell className="text-muted-foreground">{product.category}</TableCell>
                   <TableCell className="font-mono text-xs text-muted-foreground">{product.sku}</TableCell>
                   <TableCell className="text-right font-medium">{product.qty} L</TableCell>
-                  <TableCell className="text-right font-semibold">${product.price.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-semibold">₹{product.price.toFixed(2)}</TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
                       product.status === "In Stock" 
@@ -244,7 +244,7 @@ export default function ProductsPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground">Unit Price ($)</label>
+                      <label className="text-xs font-semibold text-muted-foreground">Unit Price (₹)</label>
                       <Input 
                         type="number" 
                         step="0.01" 
@@ -305,7 +305,7 @@ export default function ProductsPage() {
                   <div className="space-y-1">
                     <div className="flex justify-between items-baseline">
                       <h4 className="font-bold text-lg truncate max-w-[140px]">{newProductName || "Product Name"}</h4>
-                      <span className="text-sm font-semibold">${(newProductPrice || 0).toFixed(2)}</span>
+                      <span className="text-sm font-semibold">₹{(newProductPrice || 0).toFixed(2)}</span>
                     </div>
                     <p className="text-xs text-muted-foreground">{newProductCategory}</p>
                     <div className="flex justify-between items-center pt-2">
