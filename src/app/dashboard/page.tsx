@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Package, 
   Boxes, 
@@ -10,7 +11,8 @@ import {
   ArrowUpRight, 
   Plus, 
   Download,
-  Paintbrush
+  Paintbrush,
+  Check
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,7 +53,8 @@ const bestSellers = [
 ];
 
 export default function DashboardPage() {
-  const { products, logs } = useInventory();
+  const { products, logs, adjustStock } = useInventory();
+  const [selectedDetail, setSelectedDetail] = useState<"products" | "stock" | "sales" | "revenue" | "low-stock" | null>(null);
 
   // 1. Total Stock calculation
   const totalStock = products.reduce((sum, p) => sum + p.qty, 0);
@@ -98,8 +101,13 @@ export default function DashboardPage() {
       {/* Grid: 5 Dashboard Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {/* Total Products */}
-        <Card className="overflow-hidden relative group">
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Card 
+          onClick={() => setSelectedDetail(selectedDetail === "products" ? null : "products")}
+          className={`overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all ${
+            selectedDetail === "products" ? "ring-2 ring-blue-500 shadow-md scale-[1.01]" : "hover:shadow-md"
+          }`}
+        >
+          <div className="absolute top-0 left-0 w-full h-[3px] bg-blue-500 opacity-100" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Products</CardTitle>
             <div className="p-2 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
@@ -129,8 +137,13 @@ export default function DashboardPage() {
         </Card>
 
         {/* Total Stock */}
-        <Card className="overflow-hidden relative group">
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Card 
+          onClick={() => setSelectedDetail(selectedDetail === "stock" ? null : "stock")}
+          className={`overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all ${
+            selectedDetail === "stock" ? "ring-2 ring-emerald-500 shadow-md scale-[1.01]" : "hover:shadow-md"
+          }`}
+        >
+          <div className="absolute top-0 left-0 w-full h-[3px] bg-emerald-500 opacity-100" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Stock</CardTitle>
             <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400">
@@ -160,8 +173,13 @@ export default function DashboardPage() {
         </Card>
 
         {/* Today Sales */}
-        <Card className="overflow-hidden relative group">
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Card 
+          onClick={() => setSelectedDetail(selectedDetail === "sales" ? null : "sales")}
+          className={`overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all ${
+            selectedDetail === "sales" ? "ring-2 ring-indigo-500 shadow-md scale-[1.01]" : "hover:shadow-md"
+          }`}
+        >
+          <div className="absolute top-0 left-0 w-full h-[3px] bg-indigo-500 opacity-100" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">Today Sales</CardTitle>
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
@@ -191,8 +209,13 @@ export default function DashboardPage() {
         </Card>
 
         {/* Revenue */}
-        <Card className="overflow-hidden relative group">
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Card 
+          onClick={() => setSelectedDetail(selectedDetail === "revenue" ? null : "revenue")}
+          className={`overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all ${
+            selectedDetail === "revenue" ? "ring-2 ring-amber-500 shadow-md scale-[1.01]" : "hover:shadow-md"
+          }`}
+        >
+          <div className="absolute top-0 left-0 w-full h-[3px] bg-amber-500 opacity-100" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
             <div className="p-2 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
@@ -222,11 +245,16 @@ export default function DashboardPage() {
         </Card>
 
         {/* Low Stock Alerts */}
-        <Card className="overflow-hidden relative group border-destructive/20 dark:border-destructive/30">
+        <Card 
+          onClick={() => setSelectedDetail(selectedDetail === "low-stock" ? null : "low-stock")}
+          className={`overflow-hidden relative group cursor-pointer active:scale-[0.98] transition-all border-destructive/20 dark:border-destructive/30 ${
+            selectedDetail === "low-stock" ? "ring-2 ring-red-500 shadow-md scale-[1.01]" : "hover:shadow-md"
+          }`}
+        >
           <div className="absolute top-0 left-0 w-full h-[3px] bg-destructive opacity-100" />
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">Low Stock</CardTitle>
-            <div className="p-2 rounded-xl bg-red-50 text-destructive dark:bg-red-950/20 dark:text-destructive animate-pulse">
+            <div className={`p-2 rounded-xl bg-red-50 text-destructive dark:bg-red-950/20 dark:text-destructive ${lowStockCount > 0 ? "animate-pulse" : ""}`}>
               <AlertTriangle size={16} />
             </div>
           </CardHeader>
@@ -254,6 +282,280 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Collapsible Category Detail Drawer */}
+      <AnimatePresence>
+        {selectedDetail && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+            animate={{ opacity: 1, height: "auto", marginTop: 24 }}
+            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <Card className="border border-border/80 bg-white/60 dark:bg-card/40 backdrop-blur-xl rounded-3xl shadow-lg relative overflow-hidden">
+              {/* Corner abstract decoration gradient */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-accent/10 to-blue-500/10 blur-3xl rounded-full -mr-16 -mt-16 pointer-events-none" />
+              
+              <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 pb-4">
+                <div>
+                  <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    {selectedDetail === "products" && <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />}
+                    {selectedDetail === "stock" && <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />}
+                    {selectedDetail === "sales" && <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />}
+                    {selectedDetail === "revenue" && <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />}
+                    {selectedDetail === "low-stock" && <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />}
+                    {selectedDetail === "products" && "Active Paint Catalog Breakdown"}
+                    {selectedDetail === "stock" && "Paint Volume Inventory Levels"}
+                    {selectedDetail === "sales" && "Today's Transaction Registry"}
+                    {selectedDetail === "revenue" && "Dynamic Income Contribution"}
+                    {selectedDetail === "low-stock" && "Critical Restock Assistant"}
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {selectedDetail === "products" && "Analysis of SKU distributions and paint categories in active catalog."}
+                    {selectedDetail === "stock" && "Granular volume in stock (Liters) per color swatch with health status."}
+                    {selectedDetail === "sales" && "Logs of counter transactions completed by staff today."}
+                    {selectedDetail === "revenue" && "Financial gross earnings split by color sales."}
+                    {selectedDetail === "low-stock" && "Top up critical inventory levels in one tap."}
+                  </CardDescription>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedDetail(null)} 
+                  className="rounded-full w-8 h-8 p-0"
+                >
+                  ✕
+                </Button>
+              </CardHeader>
+              <CardContent className="p-6">
+                
+                {/* 1. TOTAL PRODUCTS BREAKDOWN */}
+                {selectedDetail === "products" && (
+                  <div className="space-y-6">
+                    {/* Category Distribution Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {["Interior Paint", "Exterior Paint", "Wall Paint", "Primers"].map((cat) => {
+                        const count = products.filter(p => p.category === cat).length;
+                        const percentage = products.length > 0 ? (count / products.length) * 100 : 0;
+                        return (
+                          <div key={cat} className="p-4 bg-secondary/30 rounded-2xl border border-border/40">
+                            <span className="text-xs text-muted-foreground font-medium block">{cat}</span>
+                            <span className="text-2xl font-black mt-1 block">{count}</span>
+                            <div className="w-full bg-slate-200 dark:bg-zinc-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
+                              <div 
+                                className="h-full bg-blue-500 rounded-full transition-all duration-500" 
+                                style={{ width: `${percentage}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* Quick Swatch List */}
+                    <div className="border border-border/40 rounded-2xl overflow-hidden bg-background/50">
+                      <div className="p-3 bg-secondary/50 font-semibold text-xs border-b border-border/40 grid grid-cols-3">
+                        <span>Paint Name</span>
+                        <span>SKU</span>
+                        <span className="text-right">Category</span>
+                      </div>
+                      <div className="divide-y divide-border/30 max-h-48 overflow-y-auto">
+                        {products.map(p => (
+                          <div key={p.id} className="p-3 text-xs grid grid-cols-3 items-center">
+                            <span className="flex items-center gap-2 font-bold">
+                              <span className="w-3.5 h-3.5 rounded-md border border-black/10 flex-shrink-0" style={{ backgroundColor: p.rgb }} />
+                              {p.name}
+                            </span>
+                            <span className="font-mono text-muted-foreground">{p.sku}</span>
+                            <span className="text-right text-muted-foreground">{p.category}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. TOTAL STOCK LEVEL BREAKDOWN */}
+                {selectedDetail === "stock" && (
+                  <div className="space-y-4">
+                    <p className="text-xs font-semibold text-muted-foreground mb-2">Color Stock Levels (Highest to Lowest):</p>
+                    <div className="space-y-3.5 max-h-72 overflow-y-auto pr-1">
+                      {[...products].sort((a, b) => b.qty - a.qty).map(p => {
+                        const isLow = p.qty <= 5;
+                        const maxVal = 150; // max scale
+                        const percent = Math.min(100, (p.qty / maxVal) * 100);
+                        return (
+                          <div key={p.id} className="space-y-1.5">
+                            <div className="flex justify-between items-baseline text-xs">
+                              <span className="flex items-center gap-2 font-bold">
+                                <span className="w-3.5 h-3.5 rounded-md border border-black/10 flex-shrink-0" style={{ backgroundColor: p.rgb }} />
+                                {p.name}
+                              </span>
+                              <span className="font-semibold flex items-center gap-2">
+                                <span className={isLow ? "text-red-500 font-bold" : "text-emerald-500"}>
+                                  {isLow ? "⚠️ Low Stock" : "✓ Healthy"}
+                                </span>
+                                <span className="text-muted-foreground">({p.qty} Liters)</span>
+                              </span>
+                            </div>
+                            <div className="w-full bg-slate-200 dark:bg-zinc-800 h-2.5 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full rounded-full transition-all duration-500 shadow-inner"
+                                style={{ 
+                                  width: `${percent}%`,
+                                  backgroundColor: p.rgb,
+                                  filter: "brightness(0.95)"
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. TODAY SALES BREAKDOWN */}
+                {selectedDetail === "sales" && (
+                  <div className="space-y-4">
+                    {checkoutsToday.length === 0 ? (
+                      <div className="p-8 text-center bg-secondary/10 rounded-2xl border border-dashed flex flex-col items-center justify-center space-y-2">
+                        <ShoppingCart size={24} className="text-muted-foreground" />
+                        <span className="text-xs font-bold text-muted-foreground">No counter sales logged yet today.</span>
+                        <span className="text-[10px] text-muted-foreground/80">Process checkouts in the POS "Sell" screen to record real-time metrics.</span>
+                      </div>
+                    ) : (
+                      <div className="border border-border/40 rounded-2xl overflow-hidden bg-background/50">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="bg-secondary/50 font-semibold border-b border-border/40">
+                              <th className="p-3">Invoice</th>
+                              <th className="p-3">Paint Swatch</th>
+                              <th className="p-3 text-right">Volume</th>
+                              <th className="p-3 text-right">Authorized</th>
+                              <th className="p-3 text-right">Time</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border/30">
+                            {checkoutsToday.map((log) => {
+                              const prod = products.find(p => p.name === log.item);
+                              return (
+                                <tr key={log.id} className="hover:bg-secondary/20">
+                                  <td className="p-3 font-mono font-bold text-muted-foreground">#INV-{log.id}</td>
+                                  <td className="p-3 flex items-center gap-2 font-bold">
+                                    <span 
+                                      className="w-3.5 h-3.5 rounded-md border border-black/10 flex-shrink-0" 
+                                      style={{ backgroundColor: prod ? prod.rgb : "#ccc" }} 
+                                    />
+                                    {log.item}
+                                  </td>
+                                  <td className="p-3 text-right font-extrabold text-red-600">{log.change}</td>
+                                  <td className="p-3 text-right text-muted-foreground">{log.user}</td>
+                                  <td className="p-3 text-right text-muted-foreground">{log.time}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 4. REVENUE CONTRIBUTION BREAKDOWN */}
+                {selectedDetail === "revenue" && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                      <div className="md:col-span-1 p-5 bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-3xl space-y-2">
+                        <span className="text-xs text-muted-foreground font-semibold">Today's Revenue Total</span>
+                        <div className="text-3xl font-black text-amber-600 dark:text-amber-400">${finalRevenue.toFixed(2)}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          Subtotal: ${revenueToday.toFixed(2)} <br />
+                          Sales Tax (8%): ${(revenueToday * 0.08).toFixed(2)}
+                        </div>
+                      </div>
+                      
+                      <div className="md:col-span-2 space-y-3">
+                        <p className="text-xs font-semibold text-muted-foreground">Product Sales Contribution:</p>
+                        <div className="space-y-2.5 max-h-48 overflow-y-auto">
+                          {products.map(p => {
+                            const paintLogs = checkoutsToday.filter(l => l.item === p.name);
+                            const litersSold = paintLogs.reduce((sum, l) => sum + Math.abs(parseInt(l.change)), 0);
+                            const paintRevenue = litersSold * p.price * 1.08;
+                            if (paintRevenue === 0) return null;
+                            const share = finalRevenue > 0 ? (paintRevenue / finalRevenue) * 100 : 0;
+                            return (
+                              <div key={p.id} className="space-y-1 text-xs">
+                                <div className="flex justify-between font-bold">
+                                  <span className="flex items-center gap-1.5">
+                                    <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: p.rgb }} />
+                                    {p.name}
+                                  </span>
+                                  <span className="text-muted-foreground">${paintRevenue.toFixed(2)} ({share.toFixed(0)}%)</span>
+                                </div>
+                                <div className="w-full bg-slate-200 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                                  <div className="h-full bg-amber-500 rounded-full" style={{ width: `${share}%` }} />
+                                </div>
+                              </div>
+                            );
+                          }).filter(Boolean)}
+                          {checkoutsToday.length === 0 && (
+                            <div className="text-xs text-muted-foreground italic">No sales transactions available to calculate contribution share.</div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. LOW STOCK CRITICAL ALERTS & ONE-TAP RESTOCK */}
+                {selectedDetail === "low-stock" && (
+                  <div className="space-y-4">
+                    {lowStockItems.length === 0 ? (
+                      <div className="p-8 text-center bg-green-500/10 rounded-2xl border border-green-500/20 flex flex-col items-center justify-center space-y-1 text-green-600 dark:text-green-400">
+                        <Check size={28} className="animate-bounce" />
+                        <span className="text-sm font-bold">All inventory levels completely healthy!</span>
+                        <span className="text-xs opacity-80">There are no critical low stock alerts to display.</span>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-xs font-semibold text-muted-foreground">Paints Under Threshold (&le; 5 Liters). Click Quick Restock to instantly add +10 L:</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {lowStockItems.map((item) => (
+                            <div 
+                              key={item.id} 
+                              className="p-4 bg-red-500/5 dark:bg-red-500/10 rounded-2xl border border-red-500/15 flex items-center justify-between gap-4"
+                            >
+                              <div className="min-w-0">
+                                <span className="flex items-center gap-2 font-bold text-xs">
+                                  <span className="w-3.5 h-3.5 rounded-md border border-black/10 flex-shrink-0" style={{ backgroundColor: item.rgb }} />
+                                  {item.name}
+                                </span>
+                                <span className="text-[10px] text-muted-foreground mt-1 block">SKU: {item.sku} • Category: {item.category}</span>
+                                <span className="inline-block mt-2 px-2 py-0.5 rounded-md bg-red-100 text-red-700 dark:bg-red-950/20 dark:text-red-400 text-[10px] font-bold">
+                                  ⚠️ {item.qty} L Left
+                                </span>
+                              </div>
+                              <Button 
+                                size="sm" 
+                                className="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-sm text-xs px-3 h-9"
+                                onClick={() => adjustStock(item.id, 10)}
+                              >
+                                Quick Restock (+10L)
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Analytics + Side Panels Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -351,58 +653,65 @@ export default function DashboardPage() {
 
         {/* Right Col: Timeline + Activity Feed */}
         <div className="space-y-8">
-          
-          {/* Quick Actions Card */}
-          <Card className="bg-gradient-to-br from-primary to-primary/95 text-white">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Paintbrush className="text-accent" size={18} />
-                PaintFlow POS
-              </CardTitle>
-              <CardDescription className="text-white/60">Fast counter checkout & inventory adjustments.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/dashboard/sell" className="block w-full">
-                <Button className="w-full bg-white text-primary hover:bg-white/90 gap-2 h-11">
-                  Launch Quick Sell Flow
-                  <ArrowUpRight size={16} />
-                </Button>
-              </Link>
-              <Link href="/dashboard/products" className="block w-full">
-                <Button variant="outline" className="w-full border-white/20 hover:bg-white/10 text-white gap-2 h-11 bg-transparent">
-                  Browse Inventory
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
 
           {/* Recent Activity Timeline */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base font-semibold">Activity Timeline</CardTitle>
-              <CardDescription>Real-time updates of operations.</CardDescription>
+              <CardTitle className="text-base font-semibold">Billing & Sold Out Registry</CardTitle>
+              <CardDescription>Recent transactions and inventory sell-outs.</CardDescription>
             </CardHeader>
             <CardContent className="relative pl-6 border-l border-border ml-3 space-y-6">
-              {logs.slice(0, 4).map((activity) => {
-                const isAdded = activity.change.startsWith("+");
-                const isDeducted = activity.change.startsWith("-");
+              {/* Show completely sold out products first, if any! */}
+              {products.filter(p => p.qty === 0).map((prod) => (
+                <div key={`soldout-${prod.id}`} className="relative">
+                  <span className="absolute -left-[30px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-background ring-1 ring-border bg-red-600 animate-ping" />
+                  <span className="absolute -left-[30px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-background ring-1 ring-border bg-red-600" />
+                  <div>
+                    <p className="text-xs font-extrabold text-red-600 flex items-center gap-1.5">
+                      🛑 SOLD OUT ALERT
+                    </p>
+                    <p className="text-xs text-foreground font-semibold mt-0.5">{prod.name} is out of stock!</p>
+                    <span className="text-[10px] text-muted-foreground block mt-1">Liters left: 0 L</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Show recent billing checkouts */}
+              {logs.filter(l => l.change.startsWith("-") || l.qty === 0).slice(0, 4).map((activity) => {
+                const isSoldOut = activity.qty === 0;
                 return (
                   <div key={activity.id} className="relative">
                     {/* Timeline dot */}
                     <span className={`absolute -left-[30px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-background ring-1 ring-border ${
-                      isAdded ? "bg-emerald-500" :
-                      isDeducted ? "bg-blue-500" : "bg-red-500"
+                      isSoldOut ? "bg-red-600 animate-pulse" : "bg-blue-500"
                     }`} />
                     <div>
                       <p className="text-sm font-semibold text-foreground">
-                        {isAdded ? "Stock Restocked" : isDeducted ? "Order Completed" : "Catalog Adjusted"}
+                        {isSoldOut ? "Stock Fully Sold Out" : "Customer Billing Completed"}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{activity.item} ({activity.change})</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {activity.item} ({activity.change})
+                      </p>
+                      <div className="flex gap-2 items-center mt-1">
+                        <span className="text-[10px] bg-secondary px-1.5 py-0.5 rounded font-mono text-muted-foreground">
+                          Invoice #{activity.id}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-medium">
+                          Rem: {activity.qty} L
+                        </span>
+                      </div>
                       <span className="text-[10px] text-muted-foreground block mt-1">{activity.time}</span>
                     </div>
                   </div>
                 );
               })}
+
+              {/* Catch-all when no billing transactions exist */}
+              {logs.filter(l => l.change.startsWith("-") || l.qty === 0).length === 0 && products.filter(p => p.qty === 0).length === 0 && (
+                <div className="text-center text-xs text-muted-foreground py-6">
+                  No billing checkout data or sold out items recorded today.
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

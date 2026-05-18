@@ -29,6 +29,7 @@ interface InventoryContextType {
   addProduct: (product: Omit<Product, "id" | "status">) => void;
   deleteProduct: (id: number) => void;
   processCheckout: (cartItems: { product: Product; quantity: number }[]) => void;
+  adjustStock: (id: number, amount: number) => void;
 }
 
 const initialProducts: Product[] = [
@@ -162,8 +163,36 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     saveLogs([...newLogs, ...logs]);
   };
 
+  const adjustStock = (id: number, amount: number) => {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+
+    const nextQty = Math.max(0, product.qty + amount);
+    const updatedProducts = products.map(p => {
+      if (p.id === id) {
+        return {
+          ...p,
+          qty: nextQty,
+          status: nextQty <= 5 ? "Low Stock" : "In Stock"
+        };
+      }
+      return p;
+    });
+    saveProducts(updatedProducts);
+
+    const newLog: StockLog = {
+      id: logs.length > 0 ? Math.max(...logs.map(l => l.id)) + 1 : 1,
+      item: product.name,
+      change: amount >= 0 ? `+${amount} L` : `${amount} L`,
+      qty: nextQty,
+      user: "John Doe",
+      time: "Just now"
+    };
+    saveLogs([newLog, ...logs]);
+  };
+
   return (
-    <InventoryContext.Provider value={{ products, logs, isLoaded, addProduct, deleteProduct, processCheckout }}>
+    <InventoryContext.Provider value={{ products, logs, isLoaded, addProduct, deleteProduct, processCheckout, adjustStock }}>
       {children}
     </InventoryContext.Provider>
   );
