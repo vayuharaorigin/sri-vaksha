@@ -543,6 +543,45 @@
 
                   <!-- Checkout summary -->
                   <div class="p-6 border-t bg-slate-50/50 dark:bg-zinc-900/50 space-y-4">
+                    <!-- Dynamic Payment Method Selection -->
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wide">Payment Method</label>
+                      <div class="grid grid-cols-3 gap-2">
+                        <!-- PhonePe Option -->
+                        <button 
+                          type="button" 
+                          onclick="selectPaymentMethod('PhonePe')"
+                          id="pay-method-phonepe"
+                          class="pay-method-btn flex flex-col items-center justify-center py-2.5 px-1 border border-slate-200 dark:border-zinc-800 rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-zinc-800 bg-white dark:bg-zinc-900"
+                        >
+                          <i data-lucide="smartphone" class="w-4 h-4 text-purple-600 mb-1"></i>
+                          <span class="text-[9px] font-bold text-slate-700 dark:text-zinc-300">PhonePe</span>
+                        </button>
+                        
+                        <!-- GooglePay Option -->
+                        <button 
+                          type="button" 
+                          onclick="selectPaymentMethod('GooglePay')"
+                          id="pay-method-googlepay"
+                          class="pay-method-btn flex flex-col items-center justify-center py-2.5 px-1 border border-slate-200 dark:border-zinc-800 rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-zinc-800 bg-white dark:bg-zinc-900"
+                        >
+                          <i data-lucide="qr-code" class="w-4 h-4 text-blue-600 mb-1"></i>
+                          <span class="text-[9px] font-bold text-slate-700 dark:text-zinc-300">GooglePay</span>
+                        </button>
+                        
+                        <!-- Cash Option -->
+                        <button 
+                          type="button" 
+                          onclick="selectPaymentMethod('Cash')"
+                          id="pay-method-cash"
+                          class="pay-method-btn flex flex-col items-center justify-center py-2.5 px-1 border-2 border-emerald-600 dark:border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/15 rounded-xl transition-all"
+                        >
+                          <i data-lucide="banknote" class="w-4 h-4 text-emerald-600 mb-1"></i>
+                          <span class="text-[9px] font-bold text-slate-800 dark:text-zinc-200">Cash</span>
+                        </button>
+                      </div>
+                    </div>
+
                     <div class="space-y-2 text-xs font-medium">
                       <div class="flex justify-between text-slate-400">
                         <span>Subtotal</span>
@@ -936,7 +975,7 @@
           <div class="text-[11px] space-y-0.5 font-medium">
             <p class="text-slate-400">Billed To:</p>
             <p class="text-black dark:text-white font-bold">Counter Customer (Walk-in)</p>
-            <p class="text-[10px] text-slate-400">Method: Credit Card Terminal</p>
+            <p id="bill-payment-method" class="text-[10px] text-slate-400">Method: Cash</p>
           </div>
 
           <div class="space-y-3">
@@ -980,7 +1019,7 @@
     <div class="text-sm space-y-1">
       <h3 class="font-bold text-gray-700">Billed To:</h3>
       <p class="text-gray-600">Counter Customer (Walk-in)</p>
-      <p class="text-gray-400 text-xs">Payment Method: Card Transaction</p>
+      <p id="print-payment-method" class="text-gray-400 text-xs">Payment Method: Cash</p>
     </div>
 
     <!-- Items table -->
@@ -1061,13 +1100,35 @@
       selectedCategory: 'All',
       cart: [],
       logs: getStoredItem("pf_logs", initialLogs),
-      completedInvoice: null
+      completedInvoice: null,
+      paymentMethod: 'Cash'
     };
 
     // Save helper
     function saveState() {
       localStorage.setItem("pf_products", JSON.stringify(state.products));
       localStorage.setItem("pf_logs", JSON.stringify(state.logs));
+    }
+
+    function selectPaymentMethod(method) {
+      state.paymentMethod = method;
+      
+      const buttons = {
+        'PhonePe': { id: 'pay-method-phonepe', activeClass: 'border-2 border-purple-600 dark:border-purple-500 bg-purple-50/40 dark:bg-purple-950/15' },
+        'GooglePay': { id: 'pay-method-googlepay', activeClass: 'border-2 border-blue-600 dark:border-blue-500 bg-blue-50/40 dark:bg-blue-950/15' },
+        'Cash': { id: 'pay-method-cash', activeClass: 'border-2 border-emerald-600 dark:border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/15' }
+      };
+      
+      Object.keys(buttons).forEach(key => {
+        const btn = document.getElementById(buttons[key].id);
+        if (!btn) return;
+        
+        btn.className = "pay-method-btn flex flex-col items-center justify-center py-2.5 px-1 border border-slate-200 dark:border-zinc-800 rounded-xl transition-all hover:bg-slate-50 dark:hover:bg-zinc-800 bg-white dark:bg-zinc-900";
+        
+        if (key === method) {
+          btn.className = `pay-method-btn flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all ${buttons[key].activeClass}`;
+        }
+      });
     }
 
     // Initialize Page
@@ -1445,7 +1506,8 @@
         })),
         subtotal: subtotal,
         tax: tax,
-        total: total
+        total: total,
+        paymentMethod: state.paymentMethod
       };
 
       // Deduct stock levels & add inventory logs
@@ -1490,6 +1552,18 @@
       document.getElementById('bill-subtotal').innerText = `$${inv.subtotal.toFixed(2)}`;
       document.getElementById('bill-tax').innerText = `$${inv.tax.toFixed(2)}`;
       document.getElementById('bill-total').innerText = `$${inv.total.toFixed(2)}`;
+
+      // Set payment method display text
+      let methodText = "";
+      if (inv.paymentMethod === "PhonePe") {
+        methodText = "Paid through UPI (PhonePe)";
+      } else if (inv.paymentMethod === "GooglePay") {
+        methodText = "Paid through UPI (GooglePay)";
+      } else {
+        methodText = "Paid through Cash";
+      }
+      document.getElementById('bill-payment-method').innerText = `Method: ${methodText}`;
+      document.getElementById('print-payment-method').innerText = `Payment Method: ${methodText}`;
 
       const list = document.getElementById('bill-items-list');
       list.innerHTML = '';

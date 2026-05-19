@@ -11,7 +11,10 @@ import {
   CheckCircle, 
   User, 
   CreditCard, 
-  FileText 
+  FileText,
+  Smartphone,
+  QrCode,
+  Banknote
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,6 +27,7 @@ export default function SellPage() {
   const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [invoiceId, setInvoiceId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"PhonePe" | "GooglePay" | "Cash">("Cash");
   const [completedInvoice, setCompletedInvoice] = useState<{
     id: string;
     items: { name: string; sku: string; price: number; quantity: number; rgb: string }[];
@@ -31,6 +35,7 @@ export default function SellPage() {
     tax: number;
     total: number;
     date: string;
+    paymentMethod: "PhonePe" | "GooglePay" | "Cash";
   } | null>(null);
 
   const filteredProducts = products.filter(p => 
@@ -93,6 +98,7 @@ export default function SellPage() {
       subtotal,
       tax,
       total: finalTotal,
+      paymentMethod: paymentMethod,
       date: new Date().toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -268,6 +274,55 @@ export default function SellPage() {
 
           {/* Pricing & Checkout */}
           <div className="p-6 border-t bg-secondary/20 space-y-4">
+            
+            {/* Payment Method Selector */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Payment Method</label>
+              <div className="grid grid-cols-3 gap-2">
+                {/* PhonePe Option */}
+                <button 
+                  type="button" 
+                  onClick={() => setPaymentMethod("PhonePe")}
+                  className={`flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all border ${
+                    paymentMethod === "PhonePe"
+                      ? "border-2 border-purple-600 dark:border-purple-500 bg-purple-50/40 dark:bg-purple-950/15"
+                      : "border-border hover:bg-secondary/40 bg-background"
+                  }`}
+                >
+                  <Smartphone size={16} className="text-purple-600 mb-1" />
+                  <span className="text-[9px] font-bold text-foreground">PhonePe</span>
+                </button>
+                
+                {/* GooglePay Option */}
+                <button 
+                  type="button" 
+                  onClick={() => setPaymentMethod("GooglePay")}
+                  className={`flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all border ${
+                    paymentMethod === "GooglePay"
+                      ? "border-2 border-blue-600 dark:border-blue-500 bg-blue-50/40 dark:bg-blue-950/15"
+                      : "border-border hover:bg-secondary/40 bg-background"
+                  }`}
+                >
+                  <QrCode size={16} className="text-blue-600 mb-1" />
+                  <span class="text-[9px] font-bold text-foreground">GooglePay</span>
+                </button>
+                
+                {/* Cash Option */}
+                <button 
+                  type="button" 
+                  onClick={() => setPaymentMethod("Cash")}
+                  className={`flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all border ${
+                    paymentMethod === "Cash"
+                      ? "border-2 border-emerald-600 dark:border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/15"
+                      : "border-border hover:bg-secondary/40 bg-background"
+                  }`}
+                >
+                  <Banknote size={16} className="text-emerald-600 mb-1" />
+                  <span className="text-[9px] font-bold text-foreground">Cash</span>
+                </button>
+              </div>
+            </div>
+
             <div className="space-y-1.5 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
@@ -354,7 +409,13 @@ export default function SellPage() {
                   <div className="text-xs space-y-0.5">
                     <p className="text-muted-foreground">Billed To:</p>
                     <p className="font-bold text-foreground">Counter Customer (Walk-in)</p>
-                    <p className="text-muted-foreground text-[10px]">Payment Mode: Card Transaction</p>
+                    <p className="text-muted-foreground text-[10px]">
+                      Payment Mode: {
+                        completedInvoice.paymentMethod === "PhonePe" ? "Paid through UPI (PhonePe)" :
+                        completedInvoice.paymentMethod === "GooglePay" ? "Paid through UPI (GooglePay)" :
+                        "Paid through Cash"
+                      }
+                    </p>
                   </div>
 
                   {/* Items List */}
@@ -414,7 +475,13 @@ export default function SellPage() {
           <div className="text-sm space-y-1">
             <h3 className="font-semibold text-gray-700">Billed To:</h3>
             <p className="text-gray-500">Counter Customer (Walk-in)</p>
-            <p className="text-gray-400">Payment: Card Transaction</p>
+            <p className="text-gray-400">
+              Payment: {
+                completedInvoice.paymentMethod === "PhonePe" ? "Paid through UPI (PhonePe)" :
+                completedInvoice.paymentMethod === "GooglePay" ? "Paid through UPI (GooglePay)" :
+                "Paid through Cash"
+              }
+            </p>
           </div>
 
           <table className="w-full text-left text-sm border-collapse">
