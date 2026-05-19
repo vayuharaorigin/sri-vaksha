@@ -71,7 +71,7 @@ export default function LoginPage() {
               <Input
                 id="loginId"
                 type="text"
-                placeholder="srivaksa_admin"
+                placeholder="Enter your Login ID"
                 value={loginId}
                 onChange={(e) => setLoginId(e.target.value)}
                 required
