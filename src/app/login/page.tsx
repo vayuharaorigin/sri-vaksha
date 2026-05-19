@@ -1,17 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Droplet, ArrowRight } from "lucide-react";
+import { Droplet, ArrowRight, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/branches");
+    setError("");
+    
+    // Strict credential check requested by user
+    if (loginId === "srivaksa_admin" && password === "12345678") {
+      router.push("/branches");
+    } else {
+      setError("Invalid login credentials. Please try again.");
+    }
   };
 
   return (
@@ -43,12 +54,25 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-destructive/10 text-destructive text-xs font-medium p-3 rounded-xl border border-destructive/20 flex items-center gap-2"
+              >
+                <AlertCircle size={14} />
+                {error}
+              </motion.div>
+            )}
+            
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground ml-1" htmlFor="loginId">Login ID</label>
               <Input
                 id="loginId"
                 type="text"
-                placeholder="srivaksha_admin"
+                placeholder="srivaksa_admin"
+                value={loginId}
+                onChange={(e) => setLoginId(e.target.value)}
                 required
                 className="bg-white/50 dark:bg-black/50"
               />
@@ -63,6 +87,8 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className="bg-white/50 dark:bg-black/50"
               />
