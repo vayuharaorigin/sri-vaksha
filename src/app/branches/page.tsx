@@ -16,24 +16,6 @@ const branches = [
     sales: "₹45,200", 
     status: "Active" 
   },
-  { 
-    id: "Vijayawada", 
-    name: "Vijayawada Branch", 
-    location: "MG Road, Vijayawada", 
-    products: 380, 
-    stock: 3200, 
-    sales: "₹28,500", 
-    status: "Active" 
-  },
-  { 
-    id: "Guntur", 
-    name: "Guntur Branch", 
-    location: "Arundelpet, Guntur", 
-    products: 290, 
-    stock: 2100, 
-    sales: "₹18,900", 
-    status: "Active" 
-  },
 ];
 
 const containerVariants: Variants = {

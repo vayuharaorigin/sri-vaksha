@@ -41,8 +41,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   
   const branches = [
     { id: "Hyderabad", name: "Hyderabad" },
-    { id: "Vijayawada", name: "Vijayawada" },
-    { id: "Guntur", name: "Guntur" }
   ];
 
   return (
