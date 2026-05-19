@@ -29,6 +29,7 @@ interface InventoryContextType {
   activeBranch: string;
   setActiveBranch: (branch: string) => void;
   addProduct: (product: Omit<Product, "id" | "status">) => void;
+  updateProduct: (id: number, updates: Partial<Omit<Product, "id">>) => void;
   deleteProduct: (id: number) => void;
   processCheckout: (cartItems: { product: Product; quantity: number }[]) => void;
   adjustStock: (id: number, amount: number) => void;
@@ -151,6 +152,34 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     saveLogs([newLog, ...logs]);
   };
 
+  const updateProduct = (id: number, updates: Partial<Omit<Product, "id">>) => {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+
+    const updatedProducts = products.map(p => {
+      if (p.id === id) {
+        const newQty = updates.qty !== undefined ? updates.qty : p.qty;
+        return {
+          ...p,
+          ...updates,
+          status: newQty <= 5 ? "Low Stock" : "In Stock"
+        };
+      }
+      return p;
+    });
+    saveProducts(updatedProducts);
+
+    const newLog: StockLog = {
+      id: logs.length > 0 ? Math.max(...logs.map(l => l.id)) + 1 : 1,
+      item: product.name,
+      change: updates.qty !== undefined ? `Updated to ${updates.qty} L` : "Details updated",
+      qty: updates.qty !== undefined ? updates.qty : product.qty,
+      user: "srivaksha_admin",
+      time: "Just now"
+    };
+    saveLogs([newLog, ...logs]);
+  };
+
   const processCheckout = (cartItems: { product: Product; quantity: number }[]) => {
     // 1. Deduct stock levels
     const updatedProducts = products.map(p => {
@@ -212,7 +241,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <InventoryContext.Provider value={{ products, logs, isLoaded, activeBranch, setActiveBranch, addProduct, deleteProduct, processCheckout, adjustStock }}>
+    <InventoryContext.Provider value={{ products, logs, isLoaded, activeBranch, setActiveBranch, addProduct, updateProduct, deleteProduct, processCheckout, adjustStock }}>
       {children}
     </InventoryContext.Provider>
   );
