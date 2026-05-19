@@ -304,7 +304,7 @@ export default function SellPage() {
                   }`}
                 >
                   <QrCode size={16} className="text-blue-600 mb-1" />
-                  <span class="text-[9px] font-bold text-foreground">GooglePay</span>
+                  <span className="text-[9px] font-bold text-foreground">GooglePay</span>
                 </button>
                 
                 {/* Cash Option */}
