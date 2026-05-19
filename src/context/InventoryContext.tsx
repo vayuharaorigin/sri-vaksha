@@ -26,6 +26,8 @@ interface InventoryContextType {
   products: Product[];
   logs: StockLog[];
   isLoaded: boolean;
+  activeBranch: string;
+  setActiveBranch: (branch: string) => void;
   addProduct: (product: Omit<Product, "id" | "status">) => void;
   deleteProduct: (id: number) => void;
   processCheckout: (cartItems: { product: Product; quantity: number }[]) => void;
@@ -50,14 +52,17 @@ const initialLogs: StockLog[] = [
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
 export function InventoryProvider({ children }: { children: React.ReactNode }) {
+  const [activeBranch, setActiveBranchState] = useState<string>("Hyderabad");
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [logs, setLogs] = useState<StockLog[]>(initialLogs);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from local storage on mount
+  // Load from local storage on mount or branch change
   useEffect(() => {
-    const storedProducts = localStorage.getItem("pf_products");
-    const storedLogs = localStorage.getItem("pf_logs");
+    setIsLoaded(false);
+    // Initialize or load branch specific data
+    const storedProducts = localStorage.getItem(`pf_products_${activeBranch}`);
+    const storedLogs = localStorage.getItem(`pf_logs_${activeBranch}`);
 
     if (storedProducts) {
       try {
@@ -66,7 +71,8 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to parse products from localstorage", e);
       }
     } else {
-      localStorage.setItem("pf_products", JSON.stringify(initialProducts));
+      setProducts(initialProducts);
+      localStorage.setItem(`pf_products_${activeBranch}`, JSON.stringify(initialProducts));
     }
 
     if (storedLogs) {
@@ -76,20 +82,34 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to parse logs from localstorage", e);
       }
     } else {
-      localStorage.setItem("pf_logs", JSON.stringify(initialLogs));
+      setLogs(initialLogs);
+      localStorage.setItem(`pf_logs_${activeBranch}`, JSON.stringify(initialLogs));
     }
 
     setIsLoaded(true);
+  }, [activeBranch]);
+
+  const setActiveBranch = (branch: string) => {
+    setActiveBranchState(branch);
+    localStorage.setItem("pf_active_branch", branch);
+  };
+
+  // Restore last active branch on initial load
+  useEffect(() => {
+    const savedBranch = localStorage.getItem("pf_active_branch");
+    if (savedBranch) {
+      setActiveBranchState(savedBranch);
+    }
   }, []);
 
   const saveProducts = (updatedProducts: Product[]) => {
     setProducts(updatedProducts);
-    localStorage.setItem("pf_products", JSON.stringify(updatedProducts));
+    localStorage.setItem(`pf_products_${activeBranch}`, JSON.stringify(updatedProducts));
   };
 
   const saveLogs = (updatedLogs: StockLog[]) => {
     setLogs(updatedLogs);
-    localStorage.setItem("pf_logs", JSON.stringify(updatedLogs));
+    localStorage.setItem(`pf_logs_${activeBranch}`, JSON.stringify(updatedLogs));
   };
 
   const addProduct = (p: Omit<Product, "id" | "status">) => {
@@ -192,7 +212,7 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <InventoryContext.Provider value={{ products, logs, isLoaded, addProduct, deleteProduct, processCheckout, adjustStock }}>
+    <InventoryContext.Provider value={{ products, logs, isLoaded, activeBranch, setActiveBranch, addProduct, deleteProduct, processCheckout, adjustStock }}>
       {children}
     </InventoryContext.Provider>
   );

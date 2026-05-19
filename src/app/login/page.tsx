@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/dashboard");
+    router.push("/branches");
   };
 
   return (
@@ -44,11 +44,11 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground ml-1" htmlFor="email">Email</label>
+              <label className="text-sm font-medium text-foreground ml-1" htmlFor="loginId">Login ID</label>
               <Input
-                id="email"
-                type="email"
-                placeholder="hello@business.com"
+                id="loginId"
+                type="text"
+                placeholder="srivaksha_admin"
                 required
                 className="bg-white/50 dark:bg-black/50"
               />

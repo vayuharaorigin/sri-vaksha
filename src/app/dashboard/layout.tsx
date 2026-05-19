@@ -20,7 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { InventoryProvider } from "@/context/InventoryContext";
+import { useInventory } from "@/context/InventoryContext";
+import { ChevronDown, MapPin } from "lucide-react";
 
 const sidebarLinks = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -35,10 +36,17 @@ const sidebarLinks = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
+  const { activeBranch, setActiveBranch } = useInventory();
+  
+  const branches = [
+    { id: "Hyderabad", name: "Hyderabad" },
+    { id: "Vijayawada", name: "Vijayawada" },
+    { id: "Guntur", name: "Guntur" }
+  ];
 
   return (
-    <InventoryProvider>
-      <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-background">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 border-r border-border bg-card/50 backdrop-blur-xl sticky top-0 h-screen overflow-y-auto print:hidden">
         <div className="h-16 flex items-center px-6 border-b border-border">
@@ -92,12 +100,49 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
           
-          <div className="hidden lg:flex items-center flex-1 max-w-md relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-            <Input 
-              placeholder="Search products, orders, customers..." 
-              className="pl-10 h-10 bg-white/50 border-none shadow-none ring-1 ring-border focus-visible:ring-2 focus-visible:ring-accent"
-            />
+          <div className="hidden lg:flex items-center gap-6 flex-1 max-w-2xl">
+            {/* Branch Switcher */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
+                className="flex items-center gap-2 bg-secondary/50 hover:bg-secondary px-3 py-1.5 rounded-lg border border-border transition-colors text-sm font-semibold"
+              >
+                <MapPin size={14} className="text-accent" />
+                {branches.find(b => b.id === activeBranch)?.name || "Select Branch"}
+                <ChevronDown size={14} className="text-muted-foreground ml-1" />
+              </button>
+              
+              {isBranchDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsBranchDropdownOpen(false)}></div>
+                  <div className="absolute top-full left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden">
+                    {branches.map(b => (
+                      <button
+                        key={b.id}
+                        onClick={() => {
+                          setActiveBranch(b.id);
+                          setIsBranchDropdownOpen(false);
+                        }}
+                        className={cn(
+                          "w-full text-left px-4 py-2.5 text-sm hover:bg-secondary transition-colors",
+                          activeBranch === b.id ? "font-bold text-accent bg-accent/5" : "text-muted-foreground"
+                        )}
+                      >
+                        {b.name} Branch
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+              <Input 
+                placeholder="Search products, orders, customers..." 
+                className="pl-10 h-10 bg-white/50 border-none shadow-none ring-1 ring-border focus-visible:ring-2 focus-visible:ring-accent w-full"
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-2 lg:gap-4 ml-auto">
@@ -107,7 +152,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Button>
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-blue-600 p-0.5 shadow-sm cursor-pointer">
               <div className="w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-white">
-                <span className="text-xs font-bold text-primary">JD</span>
+                <span className="text-xs font-bold text-primary">SA</span>
               </div>
             </div>
           </div>
@@ -164,6 +209,5 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
     </div>
-    </InventoryProvider>
   );
 }

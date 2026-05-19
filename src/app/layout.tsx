@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "High-end SaaS inventory management dashboard for paint shops.",
 };
 
+import { InventoryProvider } from "@/context/InventoryContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -18,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="antialiased">
       <body className={cn(inter.variable, "font-sans min-h-screen bg-background text-foreground")}>
-        {children}
+        <InventoryProvider>
+          {children}
+        </InventoryProvider>
       </body>
     </html>
   );
