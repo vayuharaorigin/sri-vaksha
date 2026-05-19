@@ -19,7 +19,7 @@ export default function LoginPage() {
     setError("");
     
     // Strict credential check requested by user
-    if (loginId === "srivaksa_admin" && password === "12345678") {
+    if (loginId === "srivaksha_admin" && password === "12345678") {
       router.push("/branches");
     } else {
       setError("Invalid login credentials. Please try again.");
